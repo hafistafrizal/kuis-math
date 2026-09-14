@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Quiz Math</title>
+</head>
+<body>
+    <h1>Quiz Math</h1>
+
+    <form action="">
+        <input type="number" id="nilai1" name="nilai1" placeholder="Nilai 1">
+        <p id="operasi"></p>
+        <input type="number" id="nilai2" name="nilai2" placeholder="Nilai 2">
+
+        <br>
+        <br>
+
+        <label for="hasil">Hasil :</label><br>
+        <input type="number" id="hasil" name="hasil" readonly><br>
+
+        <p id="hasil-text"></p>
+        
+        <input type="radio" id="penjumlahan" name="math" value="penjumlahan">
+        <label for="penjumlahan">penjumlahan</label>
+        <input type="radio" id="pengurangan" name="math" value="pengurangan">
+        <label for="pengurangan">Pengurangan</label>
+        <input type="radio" id="perkalian" name="math" value="perkalian">
+        <label for="perkalian">Perkalian</label>
+        <input type="radio" id="pembagian" name="math" value="pembagian">
+        <label for="pembagian">Pembagian</label>
+        
+        <br>
+        <br>
+
+        <button type="button" onclick="hitungMath()">Submit</button>
+        <button type="button" onclick="formReset()">Cancel</button>
+    </form>
+</body>
+</html>
+
+<script>
+
+    function hitungMath() {
+        let a = document.getElementById("nilai1").value
+        let b = document.getElementById("nilai2").value
+
+        let hasil
+        let operasi
+
+        // Validasi Nilai 1 dan 2
+        if (a == "" || b == "") {
+            alert("Masukkan Nilai 0 - 9")
+            return
+        } else {
+            a = Number(document.getElementById("nilai1").value)
+            b = Number(document.getElementById("nilai2").value)
+        }
+
+        const radioPenjumlahan = document.getElementById("penjumlahan")
+        const radioPengurangan = document.getElementById("pengurangan")
+        const radioPerkalian = document.getElementById("perkalian")
+        const radioPembagian = document.getElementById("pembagian")
+
+        // OPERASI MATH
+        if (radioPenjumlahan.checked) {
+            operasi = "+"
+            hasil = a + b
+
+            console.log("Operasi: Penjumlahan", radioPenjumlahan.checked)
+        } else if (radioPengurangan.checked) {
+            operasi = "-"
+            hasil = a - b
+
+            console.log("Operasi: Pengurangan", radioPengurangan.checked)
+        } else if (radioPerkalian.checked) {
+            operasi = "x"
+            hasil = a * b
+
+            console.log("Operasi: Perkalian", radioPerkalian.checked)
+        } else if (radioPembagian.checked) {
+            operasi = "/"
+            hasil = a / b
+
+            console.log("Operasi: Pembagian", radioPembagian.checked)
+        } else {
+            return alert("Tolong Pilih Operasi Perhitungan!!!")
+        }
+
+        document.getElementById("operasi").innerHTML = operasi
+
+        document.getElementById("hasil").value = hasil
+        document.getElementById("hasil-text").innerText = hasil
+
+        // DEBUGGINGINGG
+        console.log("Nilai 1 :", a, typeof a)
+        console.log("Nilai 1 :", b, typeof b)
+        console.log("Hasil   :", hasil, typeof hasil)
+    }
+
+    function formReset() {
+        let a = document.getElementById("nilai1").value = ""
+        let b = document.getElementById("nilai2").value = ""
+        let hasil = document.getElementById("hasil").value = ""
+
+        document.getElementById("operasi").innerHTML = ""
+        document.getElementById("hasil-text").innerText = ""
+
+        const radioPenjumlahan = document.getElementById("penjumlahan")
+        const radioPengurangan = document.getElementById("pengurangan")
+        const radioPerkalian = document.getElementById("perkalian")
+        const radioPembagian = document.getElementById("pembagian")
+
+        radioPenjumlahan.checked = false
+        radioPengurangan.checked = false
+        radioPerkalian.checked = false
+        radioPembagian.checked = false
+    }
+
+</script>

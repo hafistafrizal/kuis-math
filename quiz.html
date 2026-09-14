@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+
+    <title>Quiz Math</title>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+
+            <!-- LAYAR KUIS MATH -->
+            <div class="layar-kuis" id="layar-kuis">
+                <h2 id="header-operasi"></h2>
+                
+                <div class="kuis-info">
+                    <p id="nama-user">>nama: </p>
+
+                    <div class="papan-user">
+                        <p id="papan-skor">0 Skor</p>
+                        <p>|</p>
+                        <p id="papan-waktu">0 Dtk</p>
+                    </div>
+                </div>
+
+                <div class="kuis-games">
+                    <div class="nilai-operator" id="area-soal">
+                        <p id="nilai1" name="nilai1">0</p>
+                        <span id="operasi"></span>
+                        <p id="nilai2" name="nilai2">0</p>
+                        <p> = </p>
+                    </div>
+                    <div class="jawab" id="area-jawaban">
+                        <p id="jawaban-layar" name="jawaban-layar"></p>
+                    </div>
+
+                    <p id="pesan-tengah" style="display: none; color: var(--bg-screen);">SALAH!!</p>
+                </div>
+
+            </div>
+        
+            <form action="">
+                <div class="start-kuis">
+                    <input type="number" id="jawaban-user" name="jawaban-user" class="input-content" placeholder="Jawaban Anda">
+                    <button type="button" id="generate-kuis" class="btn-3d btn-start" onclick="generateKuis()">Mulai Quiz Math</button>
+                </div>
+        
+                <div class="grid-operasi" id="grub-aksi">
+                    <button type="button" class="btn-3d label-green" onclick="hitung()">Submit</button>
+                    <button type="button" class="btn-3d label-red" onclick="formReset()">Cancel/Reset</button>
+                </div>
+
+                <hr>
+
+                <button type="button" onclick="backHome()" class="btn-3d label-dark">Kembali ke Beranda</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<script>
+    let skor = 0
+
+    const querySring = window.location.search
+    const parameter = new URLSearchParams(querySring)
+
+    let jenisOperasi = parameter.get("jenis-operasi")
+    let speedTimer = parameter.get("speed-timer")
+    
+    let batasAngka = Number(parameter.get("angka-level"))
+    let namaUser = String(parameter.get("nama-user"))
+
+    let sisaWaktu = 0
+
+    console.log("jenis", jenisOperasi, typeof jenisOperasi)
+    console.log("speed", speedTimer, typeof speedTimer)
+    console.log("batas", batasAngka, typeof batasAngka)
+    console.log("nama", namaUser, typeof namaUser)
+
+
+    let jawabanUser  // Jawaban dari user
+    let jawabanBenar // Jawaban yang Benar
+    let mesinWaktu
+    let alarmText
+
+    checkSpeed()
+    let buttonGenerate = document.getElementById("generate-kuis")
+    let inputJawabUser = document.getElementById("jawaban-user")
+    let buttonAksi = document.getElementById("grub-aksi")
+
+    document.getElementById("papan-waktu").innerText = sisaWaktu + " Dtk"
+
+
+    // INPUT REALTIME
+    const inputJawaban = document.getElementById("jawaban-user")
+    const layarJawaban = document.getElementById("jawaban-layar")
+
+    inputJawaban.addEventListener('input', function(event) {
+        layarJawaban.textContent = event.target.value
+    })
+
+    
+    // DEBUGGING
+    console.log("Jenis Operasi: ", jenisOperasi)
+    console.log("Batas Angka: ", batasAngka, typeof batasAngka)
+
+    document.getElementById("nama-user").innerText = ">Nama: " + namaUser
+
+    if (jenisOperasi == "penjumlahan"){
+        document.getElementById("header-operasi").innerText = "Quiz Penjumlahan"
+        document.getElementById("operasi").innerText = "+"
+    } else if (jenisOperasi == "pengurangan") {
+        document.getElementById("header-operasi").innerText = "Quiz Pengurangan"
+        document.getElementById("operasi").innerText = "-"
+    } else if (jenisOperasi == "perkalian") {
+        document.getElementById("header-operasi").innerText = "Quiz Perkalian"
+        document.getElementById("operasi").innerText = "x"
+    } else if (jenisOperasi == "pembagian") {
+        document.getElementById("header-operasi").innerText = "Quiz Pembagian"
+        document.getElementById("operasi").innerText = "/"
+    }
+    
+    function checkSpeed() {
+        if (speedTimer == "slow") {
+            sisaWaktu = 15
+        } else if (speedTimer == "medium") {
+            sisaWaktu = 10
+        } else if (speedTimer == "fast") {
+            sisaWaktu = 5
+        } else {
+            sisaWaktu = 10
+        }
+    }
+
+
+    function mulaiTimer() {
+        checkSpeed()
+        document.getElementById("papan-waktu").innerText = sisaWaktu + " Dtk"
+        
+        mesinWaktu = setInterval(function() {
+            sisaWaktu = sisaWaktu - 1
+            
+            if (sisaWaktu < 0) {
+                clearInterval(mesinWaktu)
+                document.getElementById("nilai1").innerText = "0"
+                document.getElementById("nilai2").innerText = "0"
+                document.getElementById("jawaban-layar").innerText = ""
+                document.getElementById("keterangan").innerText = ""
+                document.getElementById("jawaban-user").value = ""
+
+                buttonGenerate.style.display = "inline-block"
+                inputJawabUser.style.display = "none"
+                buttonAksi.style.display = "none"
+
+                alert("waktu sudah habis")
+            } else {
+                document.getElementById("papan-waktu").innerText = sisaWaktu + " Dtk"
+            }
+        }, 1000)
+    }
+
+    // Generate Number
+    function generateKuis() {
+        clearTimeout(alarmText)
+        clearInterval(mesinWaktu)
+        sisaWaktu
+        mulaiTimer()
+
+        buttonGenerate.style.display = "none"
+        inputJawabUser.style.display = "block"
+        buttonAksi.style.display = "grid"
+
+        document.getElementById("area-soal").style.display = "flex";
+        document.getElementById("area-jawaban").style.display = "block";
+        document.getElementById("pesan-tengah").style.display = "none";
+
+        let numberRange = Math.floor(Math.random() * batasAngka) + 1 // Random Range Number
+        let numberRandom = Math.floor(Math.random() * 9) + 1 // Random Number
+
+        if(jenisOperasi == "penjumlahan") {
+            if (Math.random() < 0.5) {
+                document.getElementById("nilai1").innerText = numberRange
+                document.getElementById("nilai2").innerText = numberRandom
+            } else {
+                document.getElementById("nilai1").innerText = numberRandom
+                document.getElementById("nilai2").innerText = numberRange
+            }
+
+        } else if (jenisOperasi == "pengurangan") {
+            if (numberRange < numberRandom) {
+                document.getElementById("nilai1").innerText = numberRandom
+                document.getElementById("nilai2").innerText = numberRange
+            } else {
+                document.getElementById("nilai1").innerText = numberRange
+                document.getElementById("nilai2").innerText = numberRandom
+            }
+
+        } else if (jenisOperasi == "perkalian") {
+            if (Math.random() < 0.5) {
+                document.getElementById("nilai1").innerText = numberRange
+                document.getElementById("nilai2").innerText = numberRandom
+            } else {
+                document.getElementById("nilai1").innerText = numberRandom
+                document.getElementById("nilai2").innerText = numberRange
+            }
+
+        } else if (jenisOperasi == "pembagian") {
+            let angkaX = numberRandom
+            let angkaY = numberRange
+            let hasilKali = angkaX * angkaY
+
+            document.getElementById("nilai1").innerText = hasilKali
+            document.getElementById("nilai2").innerText = angkaX
+        }
+        
+        document.getElementById("jawaban-user").value = ""
+
+        // TEST
+        console.log("Nilai 1: ", numberRange, typeof numberRange)
+        console.log("Nilai 2: ", numberRandom, typeof numberRandom)
+    }
+
+    function kedipLayar() {
+        const layar = document.getElementById("layar-kuis");
+
+        layar.style.backgroundColor = "#0f380f"
+        layar.style.color = "#8bac0f"
+
+        setTimeout(function() {
+            layar.style.backgroundColor = ""
+            layar.style.color = ""
+        }, 100) 
+    }
+
+    
+    // Fungsi Hitung
+    function hitung() {
+        let angkaKe1 = document.getElementById("nilai1").innerText
+        let angkaKe2 = document.getElementById("nilai2").innerText
+
+        if(angkaKe1 == "" || angkaKe2 == "") {
+            return alert("Klik Generate Kuis terlebih dahulu")
+        } else {
+            angkaKe1 = Number(document.getElementById("nilai1").innerText)
+            angkaKe2 = Number(document.getElementById("nilai2").innerText)
+
+            if (jenisOperasi == "penjumlahan") {
+                jawabanBenar = angkaKe1 + angkaKe2
+                correctAnswer()
+            } else if (jenisOperasi == "pengurangan") {
+                jawabanBenar = angkaKe1 - angkaKe2
+                correctAnswer()
+            } else if (jenisOperasi == "perkalian") {
+                jawabanBenar = angkaKe1 * angkaKe2
+                correctAnswer()
+            } else if (jenisOperasi == "pembagian")  {
+                jawabanBenar = angkaKe1 / angkaKe2
+                correctAnswer()
+            }
+        }
+        
+        // DEBUGGINGINGG
+        console.log("Nilai 1: ", angkaKe1, typeof angkaKe1)
+        console.log("Nilai 1: ", angkaKe2, typeof angkaKe2)
+        console.log("Jawaban Benar: ", jawabanBenar, typeof jawabanBenar)
+        console.log("Jawaban User : ", jawabanUser, typeof jawabanUser)
+        console.log("Skor: ", skor)
+    }
+
+
+    // Fungsi Cek Jawaban
+    function correctAnswer() {
+        jawabanUser = Number(document.getElementById("jawaban-user").value)
+        const layar = document.getElementById("layar-kuis")
+
+        // Cek Jawaban Benar atau Salah
+        if(jawabanUser === jawabanBenar) {
+            document.getElementById("jawaban-user").value = ""
+            document.getElementById("jawaban-layar").innerText = ""
+            skor += 5
+            document.getElementById("papan-skor").innerText = skor + " Skor"
+
+            kedipLayar()
+            generateKuis()
+            
+        } else {
+            document.getElementById("area-soal").style.display = "none";
+            document.getElementById("area-jawaban").style.display = "none";
+            document.getElementById("pesan-tengah").style.display = "block";
+
+            document.getElementById("jawaban-user").value = ""
+            document.getElementById("jawaban-layar").innerText = ""
+            skor -= 3
+            if (skor < 0){
+                skor = 0
+            }
+            document.getElementById("papan-skor").innerText = skor + " Skor"
+            
+            layar.classList.add("layar-error");
+
+            alarmText = setTimeout(function(){
+                layar.classList.remove("layar-error");
+                generateKuis() // Fungsi Generate Kuis/Soal
+            }, 800)
+        }  
+    }
+
+    // Fungsi Reset Form
+    function formReset() {
+        document.getElementById("nilai1").innerText = "0"
+        document.getElementById("nilai2").innerText = "0"
+        document.getElementById("jawaban-user").value = ""
+        document.getElementById("jawaban-layar").innerText = ""
+        document.getElementById("papan-skor").innerText = "0 Skor"
+        
+        document.getElementById("area-soal").style.display = "flex";
+        document.getElementById("area-jawaban").style.display = "block";
+        document.getElementById("pesan-tengah").style.display = "none";
+
+        clearInterval(mesinWaktu)
+        checkSpeed()
+        buttonGenerate.style.display = "inline-block"
+        inputJawabUser.style.display = "none"
+        buttonAksi.style.display = "none"
+        document.getElementById("papan-waktu").innerText = sisaWaktu + " Dtk"
+    }
+
+    function backHome() {
+        window.location.href = "./home.html"
+    }
+
+</script>

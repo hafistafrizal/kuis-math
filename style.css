@@ -1,0 +1,306 @@
+* {
+    font-family: 'Press Start 2P', monospace;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-body: #ffffff;
+    --bg-card: #e2e8f0;
+    --border-dark: #0f172a;
+
+    --btn-blue: #38bdf8;   --shadow-blue: #0284c7;
+    --btn-red: #fb7185;    --shadow-red: #e11d48;
+    --btn-green: #4ade80;  --shadow-green: #16a34a;
+    --btn-gold: #facc15;   --shadow-gold: #ca8a04;
+
+    --btn-dark: #bbbbbb;   --shadow-dark: #90949d;
+
+    --bg-screen: #8bac0f;
+    --text-screen: #0f380f;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+}
+
+.container {
+    background-color: var(--bg-body);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.main-content {
+    background-color: var(--bg-card);
+    width: 100%;
+    max-width: 450px;
+    padding: 25px;
+    border-radius: 10px;
+
+    /* min-height: 540px; */
+
+    border: 4px solid #0f172a;
+    box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* LAYAR GAMES */
+.layar-kuis {
+    background-color: var(--bg-screen);
+    color: var(--text-screen);
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    border: 4px solid #0f172a;
+
+    box-shadow: inset 5px 5px 0 rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+
+    margin-bottom: 25px;
+    /* width: 100%; */
+}
+
+.layar-kuis h2 {
+    font-size: 1rem;
+    margin: 0 0 15px 0;
+    line-height: 1.4;
+}
+
+.status-info {
+    font-size: 0.6rem;
+    line-height: 2.2;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    text-align: left; 
+}
+
+p {
+    margin: 0;
+}
+
+.title-section {
+    font-size: 0.7rem;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+}
+
+.nilai-operator {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    gap: 15px;
+}
+
+.papan-user {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    gap: 5px;
+}
+
+.kuis-games {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+
+    font-size: 1.4rem;
+}
+
+.kuis-info {
+    font-size: 0.6rem;
+    line-height: 2.2;
+    display: flex;
+    justify-content: space-between;
+}
+
+.grid-operasi {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 25px;
+    grid-template-columns: 1fr 1fr;
+}
+
+.grid-timer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.title-range {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.start-kuis {
+    margin-bottom: 25px;
+} 
+
+/* RADIO STYLE */
+input[type="radio"] {
+    display: none;
+}
+
+.radio-item label, .btn-3d{
+    display: block;
+    text-align: center;
+
+    font-size: 0.7rem;
+    padding: 15px 10px;
+    border: 4px solid #0f172a;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #0f172a;
+    line-height: 1.5;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    transition: transform 0.1s, box-shadow 0.1s;
+
+    width: 100%;
+}
+
+.radio-item label:hover, .btn-3d:hover {
+    filter: none;
+    opacity: 0.9;
+}
+
+input[type="radio"]:checked + label {
+
+    transform: translateY(6px);
+    box-shadow: 0 0 0 transparent !important;
+}
+
+/* COLORING BUTTON */
+.label-blue {
+    background-color: var(--btn-blue);
+    box-shadow: 0 6px 0 var(--shadow-blue);
+}
+
+.label-red {
+    background-color: var(--btn-red);
+    box-shadow: 0 6px 0 var(--shadow-red);
+}
+
+.label-green {
+    background-color: var(--btn-green);
+    box-shadow: 0 6px 0 var(--shadow-green);
+}
+
+.label-gold {
+    background-color: var(--btn-gold);
+    box-shadow: 0 6px 0 var(--shadow-gold);
+}
+
+.label-dark {
+    background-color: var(--btn-dark);
+    box-shadow: 0 6px 0 var(--shadow-dark);
+}
+
+.btn-start {
+    background-color: var(--btn-gold);
+    --shadow-color: var(--shadow-gold);
+    box-shadow: 0 6px 0 var(--shadow-color);
+
+    color: #0f172a;
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 20px;
+    border-radius: 5px;
+    border: 4px solid #0f172a;
+    margin-top: 10px;
+    margin-bottom: 6px;
+}
+
+.btn-start:active, .btn-3d:active {
+    transform: translateY(6px);
+    box-shadow: 0 0 0 transparent !important;
+}
+
+.stepper-level {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.stepper-level button {
+    font-size: 1rem;
+    padding: 10px 10px;
+}
+
+#angka-level {
+    background-color: var(--bg-screen);
+    color: var(--text-screen);
+    text-align: center;
+    padding: 10px 20px;
+    border: 4px solid #0f172a;
+    box-shadow: inset 4px 4px 0 rgba(0,0,0,0.15);
+    font-size: 1rem;
+    width: 200px;
+}
+
+/* STYLE MODAL NAMA */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background-color: var(--bg-card);
+    border: 4px solid #0f172a;
+    box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    text-transform: uppercase;
+}
+
+.input-content {
+    border: 4px solid #0f172a;
+    box-shadow: inset 4px 4px 0 rgba(0, 0, 0, 0.1);
+    font-size: 0.8rem;
+    padding: 15px;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+#jawaban-user {
+    display: none;
+}
+
+#grub-aksi {
+    display: none;
+}
+
+/* Getaran (Bergeser ke kiri dan kanan dengan cepat) */
+@keyframes getar-error {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+    100% { transform: translateX(0); }
+}
+
+/* 2. Class ini akan kita 'tembakkan' dari JavaScript saat jawaban salah */
+.layar-error {
+    background-color: var(--text-screen) !important; /* Layar jadi gelap */
+    color: var(--bg-screen) !important; /* Teks jadi hijau terang */
+    animation: getar-error 0.4s ease-in-out; /* Mainkan getaran selama 0.4 detik */
+}
