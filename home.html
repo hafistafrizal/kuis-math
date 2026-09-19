@@ -16,17 +16,23 @@
             <div class="layar-kuis" id="layar-kuis">
                 <h2>KUIS MATEMATIKA</h2>
                 <div class="status-info">
-                    <p>>nama: 
+                    <p>>nama : 
                         <span id="nama-user"></span>
                     </p>
-                    <p>>speed: 
-                        <span id="layar-speed"></span>
+                    <p>>operasi: 
+                        <span id="layar-operasi"></span>
                     </p>
-                    <p>>mode: 
+                    <p>>mode :
                         <span id="layar-mode"></span>
+                    </p>
+                    <p>>speed   : 
+                        <span id="layar-speed"></span>
                     </p>
                     <p>>level: 
                         <span id="angka-slider">1</span>
+                    </p>
+                    <p>>Status:
+                        READY
                     </p>
                 </div>
             </div>
@@ -37,22 +43,22 @@
                 
                 <div class="grid-operasi">
                     <div class="radio-item">
-                        <input type="radio" id="penjumlahan" name="jenis-operasi" value="penjumlahan" onchange="gantiLayar('layar-mode', '+ Tambah')">
+                        <input type="radio" id="penjumlahan" name="jenis-operasi" value="penjumlahan" onchange="gantiLayar('layar-operasi', '+ Tambah')">
                         <label for="penjumlahan" class="label-blue">penjumlahan</label>
                     </div>
 
                     <div class="radio-item">
-                        <input type="radio" id="pengurangan" name="jenis-operasi" value="pengurangan" onchange="gantiLayar('layar-mode', '- kurang')">
+                        <input type="radio" id="pengurangan" name="jenis-operasi" value="pengurangan" onchange="gantiLayar('layar-operasi', '- kurang')">
                         <label for="pengurangan" class="label-red">Pengurangan</label>
                     </div>
 
                     <div class="radio-item">
-                        <input type="radio" id="perkalian" name="jenis-operasi" value="perkalian" onchange="gantiLayar('layar-mode', 'x kali')">
+                        <input type="radio" id="perkalian" name="jenis-operasi" value="perkalian" onchange="gantiLayar('layar-operasi', 'x kali')">
                         <label for="perkalian" class="label-green">Perkalian</label>
                     </div>
                             
                     <div class="radio-item">
-                        <input type="radio" id="pembagian" name="jenis-operasi" value="pembagian" onchange="gantiLayar('layar-mode', '/ bagi')">
+                        <input type="radio" id="pembagian" name="jenis-operasi" value="pembagian" onchange="gantiLayar('layar-operasi', '/ bagi')">
                         <label for="pembagian" class="label-gold">Pembagian</label>
                     </div>
                 </div>
@@ -77,6 +83,20 @@
                     </div>
                 </div>
 
+                <!-- INPUT RANGE -->
+                <p class="title-section">Mode:</p>
+                <div class="grid-operasi">
+                    <div class="radio-item">
+                        <input type="radio" id="pilih-jawaban" name="mode-kuis" value="pilih-jawaban" checked onchange="gantiLayar('layar-mode', 'Pilihan')">
+                        <label for="pilih-jawaban" class="label-green">pilih jawaban</label>
+                    </div>
+
+                    <div class="radio-item">
+                        <input type="radio" id="input-jawaban" name="mode-kuis" value="input-jawaban" onchange="gantiLayar('layar-mode', 'Input')">
+                        <label for="input-jawaban" class="label-red">input jawaban</label>
+                    </div>
+                </div>
+
                 <!-- INPUT RANGE ANGKA KUIS -->
                 <div class="range-number">
                     <div class="title-range">
@@ -96,9 +116,8 @@
                 </div>
 
                 <input type="hidden" name="nama-user" id="hidden-nama">
-                <input type="hidden" name="angka-level" id="hidden-level">
+                <input type="hidden" name="angka-level" id="hidden-level" value="1">
                 
-
                 <div class="button-start">
                     <button type="submit" class="btn-3d btn-start">Mulai</button>
                 </div>
@@ -119,6 +138,8 @@
 </html>
 
 <script>
+
+    document.getElementById("layar-mode").innerText = "Pilihan"
 
     function validasiFormKuis() {
         const radioPenjumlahan = document.getElementById("penjumlahan")
@@ -156,7 +177,6 @@
 
         document.getElementById("angka-slider").innerText = levelSekarang
         document.getElementById("angka-level").innerText = levelSekarang
-
         document.getElementById("hidden-level").value = levelSekarang
         kedipLayar()
     }
@@ -168,15 +188,9 @@
         
         document.getElementById("angka-slider").innerText = levelSekarang
         document.getElementById("angka-level").innerText = levelSekarang
+        document.getElementById("hidden-level").value = levelSekarang
         kedipLayar()
     }
-    
-
-    // function rangeAngka() {
-    //     angkaSlider = document.getElementById("slider").value
-
-    //     document.getElementById("angka-slider").innerText = angkaSlider
-    // } 
 
     function gantiLayar(idTujuan, textNew) {
         document.getElementById(idTujuan).innerText = textNew
