@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <title>Home Math Quiz</title>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+
+            <!-- LAYAR KUIS MATH -->
+            <div class="layar-kuis" id="layar-kuis">
+                <h2>KUIS MATEMATIKA</h2>
+                <div class="status-info">
+                    <p>>nama : 
+                        <span id="nama-user"></span>
+                    </p>
+                    <p>>operasi: 
+                        <span id="layar-operasi"></span>
+                    </p>
+                    <p>>mode :
+                        <span id="layar-mode"></span>
+                    </p>
+                    <p>>speed   : 
+                        <span id="layar-speed"></span>
+                    </p>
+                    <p>>level: 
+                        <span id="angka-slider">1</span>
+                    </p>
+                    <p>>Status:
+                        READY
+                    </p>
+                </div>
+            </div>
+
+            <!-- BUTTON OPERASI KUIS-->
+            <form action="quiz.html" method="GET" onsubmit="return validasiFormKuis()">
+                <p class="title-section">Pilih Operasi :</p>
+                
+                <div class="grid-operasi">
+                    <div class="radio-item">
+                        <input type="radio" id="penjumlahan" name="jenis-operasi" value="penjumlahan" onchange="gantiLayar('layar-operasi', '+ Tambah')">
+                        <label for="penjumlahan" class="label-blue">penjumlahan</label>
+                    </div>
+
+                    <div class="radio-item">
+                        <input type="radio" id="pengurangan" name="jenis-operasi" value="pengurangan" onchange="gantiLayar('layar-operasi', '- kurang')">
+                        <label for="pengurangan" class="label-red">Pengurangan</label>
+                    </div>
+
+                    <div class="radio-item">
+                        <input type="radio" id="perkalian" name="jenis-operasi" value="perkalian" onchange="gantiLayar('layar-operasi', 'x kali')">
+                        <label for="perkalian" class="label-green">Perkalian</label>
+                    </div>
+                            
+                    <div class="radio-item">
+                        <input type="radio" id="pembagian" name="jenis-operasi" value="pembagian" onchange="gantiLayar('layar-operasi', '/ bagi')">
+                        <label for="pembagian" class="label-gold">Pembagian</label>
+                    </div>
+                </div>
+                        
+                <!-- INPUT WAKTU PENGERJAAN -->
+                <p class="title-section">Waktu Pengerjaan:</p>
+
+                <div class="grid-timer">
+                    <div class="radio-item">
+                        <input type="radio" name="speed-timer" id="slow" value="slow" onchange="gantiLayar('layar-speed', '15 detik')">
+                        <label for="slow" class="label-dark">Lambat</label>
+                    </div>
+
+                    <div class="radio-item">
+                        <input type="radio" name="speed-timer" id="medium" value="medium" onchange="gantiLayar('layar-speed', '10 detik')">
+                        <label for="medium" class="label-dark">Standart</label>
+                    </div>
+
+                    <div class="radio-item">
+                        <input type="radio" name="speed-timer" id="fast" value="fast" onchange="gantiLayar('layar-speed', '5 detik')">
+                        <label for="fast" class="label-dark">Cepat</label>
+                    </div>
+                </div>
+
+                <!-- INPUT RANGE -->
+                <p class="title-section">Mode:</p>
+                <div class="grid-operasi">
+                    <div class="radio-item">
+                        <input type="radio" id="pilih-jawaban" name="mode-kuis" value="pilih-jawaban" checked onchange="gantiLayar('layar-mode', 'Pilihan')">
+                        <label for="pilih-jawaban" class="label-green">pilih jawaban</label>
+                    </div>
+
+                    <div class="radio-item">
+                        <input type="radio" id="input-jawaban" name="mode-kuis" value="input-jawaban" onchange="gantiLayar('layar-mode', 'Input')">
+                        <label for="input-jawaban" class="label-red">input jawaban</label>
+                    </div>
+                </div>
+
+                <!-- INPUT RANGE ANGKA KUIS -->
+                <div class="range-number">
+                    <div class="title-range">
+                        <div class="title-section">
+                           <p> Range Angka: </p>
+                        </div>
+                        <div class="title-section">
+                            <p>1-10</p>
+                        </div>
+                    </div>
+
+                    <div class="stepper-level">
+                        <button type="button" class="btn-3d label-red" onclick="kurangLevel()">-</button>
+                        <span id="angka-level">1</span>
+                        <button type="button" class="btn-3d label-blue" onclick="tambahLevel()">+</button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="nama-user" id="hidden-nama">
+                <input type="hidden" name="angka-level" id="hidden-level" value="1">
+                
+                <div class="button-start">
+                    <button type="submit" class="btn-3d btn-start">Mulai</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+    <!-- MODAL NAMA -->
+     <div id="modal-nama" class="modal-overlay">
+        <div class="modal-box">
+            <h3>Masukkan Nama Anda:</h3>
+            <input type="text" name="input-nama" id="input-nama" class="input-content">
+            <button type="button" class="btn-3d btn-start" onclick="simpanNama()">Simpan</button>
+        </div>
+     </div>
+
+</html>
+
+<script>
+
+    document.getElementById("layar-mode").innerText = "Pilihan"
+
+    function validasiFormKuis() {
+        const radioPenjumlahan = document.getElementById("penjumlahan")
+        const radioPengurangan = document.getElementById("pengurangan")
+        const radioPerkalian = document.getElementById("perkalian")
+        const radioPembagian = document.getElementById("pembagian")
+
+        if (radioPenjumlahan.checked == false && radioPengurangan.checked == false 
+        && radioPerkalian.checked == false && radioPembagian.checked == false ) {
+            alert("Pilih Operasi Perhitungan")
+            return false
+        } else {
+            return true
+        }
+    }
+
+    function kedipLayar() {
+        const layar = document.getElementById("layar-kuis")
+
+        layar.style.backgroundColor = "#0f380f"
+        layar.style.color = "#8bac0f"
+
+        setTimeout(function() {
+            layar.style.backgroundColor = ""
+            layar.style.color = ""
+        }, 100) 
+    }
+
+    let levelSekarang = 1
+
+    function tambahLevel() {
+        if(levelSekarang < 10) {
+            levelSekarang++
+        }
+
+        document.getElementById("angka-slider").innerText = levelSekarang
+        document.getElementById("angka-level").innerText = levelSekarang
+        document.getElementById("hidden-level").value = levelSekarang
+        kedipLayar()
+    }
+
+    function kurangLevel() {
+        if(levelSekarang > 1) {
+            levelSekarang--
+        }
+        
+        document.getElementById("angka-slider").innerText = levelSekarang
+        document.getElementById("angka-level").innerText = levelSekarang
+        document.getElementById("hidden-level").value = levelSekarang
+        kedipLayar()
+    }
+
+    function gantiLayar(idTujuan, textNew) {
+        document.getElementById(idTujuan).innerText = textNew
+        kedipLayar()
+    }
+
+    // MODAL NAMA
+    function simpanNama() {
+        const nama = document.getElementById("input-nama").value
+
+        if(nama === "") {
+            return alert("Nama Tidak Boleh Kosong!")
+        }
+
+        document.getElementById("nama-user").innerText = nama
+        document.getElementById("hidden-nama").value = nama
+
+        // Menghilangkan Modal
+        document.getElementById("modal-nama").style.display = "none"
+    }
+
+
+</script>
