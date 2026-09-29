@@ -22,8 +22,17 @@
 
                     <div class="layar-gameplay" id="layar-kuis">
                         <div class="status-game">
-                            <span  class="status-kiri"></span>
-                            <span id="papan-waktu" class="status-tengah">0 Detik</span>
+                            <div class="papan-nyawa" class="status-kiri container-nyawa">
+                                <span  class="kotak-nyawa aktif"></span>
+                                <span  class="kotak-nyawa aktif"></span>
+                                <span  class="kotak-nyawa aktif"></span>
+                            </div>
+                            
+                            <div id="papan-waktu" class="wadah-waktu">
+                                <span id="waktu-global" class="teks-waktu-utama">0</span>
+                                <span id="waktu-soal" class="teks-waktu-detik">0</span>
+                            </div>
+
                             <div class="status-kanan">
                                 <span id="indikator-skor"></span>
                                 <span id="papan-skor">0 Score</span>
