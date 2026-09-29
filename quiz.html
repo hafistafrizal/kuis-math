@@ -1,85 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css">
-
-    <title>Quiz Math</title>
-</head>
-<body>
-    <div class="container">
-        <div class="main-content">
-
-            <!-- LAYAR KUIS MATH -->
-            <div class="layar-kuis" id="layar-kuis">
-                <h2 id="header-operasi"></h2>
-                
-                <div class="kuis-info">
-                    <p id="nama-user">>nama: </p>
-
-                    <div class="papan-user">
-                        <p id="papan-skor">0 Skor</p>
-                        <span id="indikator-skor"></span>
-                        <p>|</p>
-                        <p id="papan-waktu">0 Dtk</p>
-                    </div>
-                </div>
-
-                <div class="kuis-games">
-                    <div class="nilai-operator" id="area-soal">
-                        <p id="nilai1" name="nilai1">0</p>
-                        <span id="operasi"></span>
-                        <p id="nilai2" name="nilai2">0</p>
-                        <p> = </p>
-                    </div>
-
-                    <div class="jawab" id="area-jawaban">
-                        <p id="jawaban-layar" name="jawaban-layar"></p>
-                    </div>
-
-                    <p id="pesan-tengah" style="display: none; color: var(--bg-screen);">SALAH!!</p>
-                </div>
-
-            </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-            <form action="">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="./style.css">
+        
+        <title>Quiz Math Game</title>
+    </head>
+    <body>
+        <div class="main-content" id="area-kuis">
             
-                <div class="start-kuis">
-                    <button type="button" id="generate-kuis" class="btn-3d btn-start" onclick="generateKuis()">Mulai Quiz Math</button>
+            <div class="bezel-layar">
+                <div class="bezel-top">
+                    <span>LIVE</span>
                 </div>
                 
-                <div id="grub-aksi">
-                    <div id="mode-pilihan">
-                        <p class="title-section">Pilih Jawaban:</p>
-                        <div class="grid-operasi">
-                            <button type="button" id="aksi-1" class="btn-3d-games label-blue" onclick="checkAnswer(this.innerText)"></button>
-                            <button type="button" id="aksi-2" class="btn-3d-games label-red" onclick="checkAnswer(this.innerText)"></button>
-                            <button type="button" id="aksi-3" class="btn-3d-games label-green" onclick="checkAnswer(this.innerText)"></button>
-                            <button type="button" id="aksi-4" class="btn-3d-games label-gold" onclick="checkAnswer(this.innerText)"></button>
+                <!-- LAYAR KUIS MATH -->
+                <!-- <div class="layar-kuis" > -->
+
+                    <div class="layar-gameplay" id="layar-kuis">
+                        <div class="status-game">
+                            <span id="nama-user" class="status-kiri"></span>
+                            <span id="papan-waktu" class="status-tengah">0 Detik</span>
+                            <div class="status-kanan">
+                                <span id="indikator-skor"></span>
+                                <span id="papan-skor">0 Score</span>
+                            </div>
+                        </div>
+
+                        <div class="kuis-games">
+                            <div id="area-soal">
+                                <span id="nilai1" name="nilai1">0</span>
+                                <span id="operasi"></span>
+                                <span id="nilai2" name="nilai2">0</span>
+                                <span> = </span>
+                            </div>
+                            <div id="area-jawaban">
+                                <span id="jawaban-layar" name="jawaban-layar" class="kotak-jawaban">?</span>
+                            </div>
+                            
+                            <p id="pesan-tengah" style="display: none; color: var(--bg-screen);">SALAH!!</p>
+                            
+                        </div>
+
+                        <div class="status-bawah-game">
+                            <span>Level: <span id="level-game"></span></span>
+                            <span id="header-operasi"></span>
                         </div>
                     </div>
                     
-                    <div id="mode-input">
-                        <input type="number" id="jawaban-user" name="jawaban-user" class="input-content" placeholder="Jawaban Anda">
+                    <!-- <div class="kuis-info">
+                        <p id="nama-user">>nama: </p>
                         
-                        <div class="grid-operasi">
-                            <button type="button" class="btn-3d-games label-red" onclick="formReset()">Cancel</button>
-                            <button type="button" class="btn-3d-games label-green" onclick="inputJawaban()">Submit</button>
+                        <div class="papan-user">
+                            <p id="papan-skor">0 Skor</p>
+                            <span ></span>
+                            <p>|</p>
+                            <p id="papan-waktu">0 Dtk</p>
                         </div>
+                    </div> -->
+                    
+                <!-- </div> -->
+            </div>
+        
+        <form action="" onsubmit="event.preventDefault()">
+            
+            <div class="start-kuis">
+                <button type="button" id="generate-kuis" class="btn-start label-main-button" onclick="generateKuis()">Mulai Quiz Math</button>
+            </div>
+            
+            <div id="grub-aksi">
+                <div id="mode-pilihan">
+                    <p class="title-section">Pilih Jawaban:</p>
+                    <div class="grid-operasi">
+                        <button type="button" id="aksi-1" class="btn-3d-games label-blue" onclick="checkAnswer(this.innerText)"></button>
+                        <button type="button" id="aksi-2" class="btn-3d-games label-red" onclick="checkAnswer(this.innerText)"></button>
+                        <button type="button" id="aksi-3" class="btn-3d-games label-green" onclick="checkAnswer(this.innerText)"></button>
+                        <button type="button" id="aksi-4" class="btn-3d-games label-gold" onclick="checkAnswer(this.innerText)"></button>
                     </div>
                 </div>
-
-                <hr>
-
-                <button type="button" onclick="backHome()" class="btn-3d label-dark">Kembali ke Beranda</button>
-            </form>
-        </div>
+                
+                <div id="mode-input">
+                    <p class="title-section">Ketik Jawaban:</p>
+                    <input type="number" id="jawaban-user" name="jawaban-user" class="input-manual" placeholder="Jawaban Anda">
+                    
+                    <div class="grid-operasi">
+                        <button type="button" class="btn-3d-games label-red" onclick="formReset()">Hapus</button>
+                        <button type="button" class="btn-3d-games label-green" onclick="inputJawaban()">Submit</button>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <button type="button" onclick="backHome()" class="btn-3d label-dark">Kembali ke Beranda</button>
+        </form>
     </div>
 
 </body>
+
+    <div id="modal-peringatan" class="modal-overlay" style="display: none;">
+        <div class="modal-box" style="text-align: center;">
+            <h2 id="text-peringatan" class="text-peringatan"></h2>
+            <div class="grid-operasi">
+                <button type="button" class="btn-3d-games label-red" onclick="backHome()">BACK HOME</button>
+                <button type="button" class="btn-3d-games label-gold" onclick="tutupPeringatan()">COBA LAGI</button>
+            </div>
+        </div>
+    </div>
+
 </html>
 
-<script src="./script.js"></script>
+<script src="./script.js?=v1"></script>

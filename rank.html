@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+
+    <title>Quiz Math Rank</title>
+</head>
+<body>
+    <div class="main-content">
+        <div class="bezel-layar">
+            <div class="bezel-top">
+                <span>LIVE</span>
+            </div>
+
+            <div class="layar-kuis" id="layar-kuis">
+                <div class="status-info">
+
+                    <div id="layar-result" style="height: 100%;">
+                        <h2 class="text-kedip">=== GAME OVER ===</h2>
+                        <div class="status-row">
+                            <p>> NAMA</p>
+                            <span id="nama-user"></span>
+                        </div>
+                        <div class="status-row">
+                            <p>> SCORE</p>
+                            <span id="papan-skor"></span>
+                        </div>
+                        <div class="status-row">
+                            <p>> RECORD</p>
+                            <span id="papan-rekor"></span>
+                        </div>
+                        <div class="status-row">
+                            <p>> RANK</p>
+                            <span id="level-game"></span>
+                        </div>
+                    </div>
+                    
+                    <div id="layar-leaderboard" style="display: none; height: 100%;">
+                        <h3 class="title-retro">=== TOP PLAYER ===</h3>
+                        <div class="layar-leaderboard">
+                            <table class="tabel-peringkat">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>NAME</th>
+                                        <th>SCORE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="juara">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid-operasi">
+            <button type="button" class="btn-start label-gold" id="ganti-layar-papan" onclick="gantiPapan()">Peringkat</button>
+            <button type="button" class="btn-start label-green" id="" onclick="backQuiz()">Main Lagi</button>
+        </div>
+
+        <hr>
+
+        <button type="button" class="btn-3d label-dark" onclick="backHome()">Kembali Ke Beranda</button>
+    </div>
+</body>
+</html>
+
+<script src="./script.js?=v1">
+
+</script>
