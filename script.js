@@ -1,9 +1,17 @@
 let skor = 0        // Score Pemain
-let sisaWaktu = 0   // Waktu Pemain
+// let sisaWaktu = 0   // Waktu Pemain
 let jawabanUser     // Jawaban dari user
 let jawabanBenar    // Jawaban yang Benar
 let mesinWaktu      
 let alarmText
+let modePapan = "result"
+let levelSekarang = 1
+
+let waktuGlobal = 0
+let waktuSoal = 5
+let timerBerjalan = false
+let sedangMengecek = false
+
 
 // Tangkap Parameter dari URL
 const querySring = window.location.search
@@ -15,75 +23,161 @@ const batasAngka   = Number(parameter.get("angka-level")) || 1
 const namaUser     = String(parameter.get("nama-user"))
 const modeKuis     = String(parameter.get("mode-kuis"))
 
-const layarKuis     = document.getElementById("layar-kuis")     // layar-kuis
-const layarJawaban  = document.getElementById("jawaban-layar")  // jawaban-layar
-const areaSoal      = document.getElementById("area-soal")      // area-soal
-const areaJawaban   = document.getElementById("area-jawaban")   // area-jawaban
-const pesanTengah   = document.getElementById("pesan-tengah")   // pesan-tengah
-const papanWaktu    = document.getElementById("papan-waktu")    // papan-waktu
-const papanSkor     = document.getElementById("papan-skor")     // papan-skor
-const indikatorSkor = document.getElementById("indikator-skor") // indikator-skor
-const buttonGenerate = document.getElementById("generate-kuis") // generate-kuis
-const buttonAksi    = document.getElementById("grub-aksi")      // grub-aksi
+const layarKuis     = document.getElementById("layar-kuis")     
+const layarJawaban  = document.getElementById("jawaban-layar")  
+const areaSoal      = document.getElementById("area-soal")      
+const areaJawaban   = document.getElementById("area-jawaban")   
+const pesanTengah   = document.getElementById("pesan-tengah")  
+// const papanWaktu    = document.getElementById("papan-waktu")
+
+const papanWaktuGlobal = document.getElementById("waktu-global")
+const papanWaktuSoal = document.getElementById("waktu-soal")
+
+const papanSkor     = document.getElementById("papan-skor")     
+const indikatorSkor = document.getElementById("indikator-skor") 
+const buttonGenerate = document.getElementById("generate-kuis") 
+const buttonAksi    = document.getElementById("grub-aksi")      
 const nilaiJawaban  = document.getElementById("jawaban-user")
 
-inisialisasiGames() // Check Operasi dan Mode games
+const layarResult = document.getElementById("layar-result")
+const layarLeaderboard = document.getElementById("layar-leaderboard")
+
+// console.log(layarResult
+
+const modalNamaPlayer = document.getElementById('modal-nama')
+if (modalNamaPlayer) {
+    
+    const namaTersimpan = localStorage.getItem("nama_terakhir")
+    const btnEditNama = document.getElementById("btn-edit-nama")
+    const statusPemain = parameter.get("status")
+
+
+    if (statusPemain === 'selesai' && namaTersimpan) {
+        document.getElementById("modal-nama").style.display = "none"
+        document.getElementById("nama-user").innerText = namaTersimpan
+        document.getElementById("hidden-nama").value = namaTersimpan
+    } else if (namaTersimpan) {
+        document.getElementById("input-nama").value = namaTersimpan
+    }
+
+    if (btnEditNama) {
+        btnEditNama.addEventListener('click', () => {
+            document.getElementById("modal-nama").style.display = "flex"
+            
+            const inputNama = localStorage.getItem("nama_terakhir")
+            if (inputNama) document.getElementById("input-nama").value = inputNama
+        })
+    }
+}
+
+
+
+if(document.getElementById("area-kuis")){
+    inisialisasiGames() // Check Operasi dan Mode games
+}
+
 
 function inisialisasiGames() {
-    if (speedTimer == "slow") sisaWaktu = 15
-    else if (speedTimer == "medium") sisaWaktu = 10
-    else if (speedTimer == "fast") sisaWaktu = 5
-    else sisaWaktu = 10
+    if (window.location.search !== "") {
+        localStorage.setItem("query_player_terakhir", window.location.search);
+    }
 
-    papanWaktu.innerText = sisaWaktu + " Dtk"
-    document.getElementById("nama-user").innerText = ">Nama: " + namaUser
+    if (speedTimer == "slow") waktuGlobal = 120
+    else if (speedTimer == "medium") waktuGlobal = 90
+    else if (speedTimer == "fast") waktuGlobal = 60
+    else waktuGlobal = 90
+
+    document.getElementById("level-game").innerText = batasAngka 
+    document.getElementById("nama-user").innerText = namaUser
+    papanWaktuGlobal.innerText = waktuGlobal
+    papanWaktuSoal.innerText = waktuSoal + " Detik"
 
     // CHECK OPERASI
     if (jenisOperasi == "penjumlahan"){
-        document.getElementById("header-operasi").innerText = "Quiz Penjumlahan"
         document.getElementById("operasi").innerText = "+"
     } else if (jenisOperasi == "pengurangan") {
-        document.getElementById("header-operasi").innerText = "Quiz Pengurangan"
         document.getElementById("operasi").innerText = "-"
     } else if (jenisOperasi == "perkalian") {
-        document.getElementById("header-operasi").innerText = "Quiz Perkalian"
         document.getElementById("operasi").innerText = "x"
     } else if (jenisOperasi == "pembagian") {
-        document.getElementById("header-operasi").innerText = "Quiz Pembagian"
         document.getElementById("operasi").innerText = "/"
     }
 
     // EVENT LISTENER
-    nilaiJawaban.addEventListener('input', function(event) {
-        layarJawaban.innerText = event.target.value
-    })
+    if(document.getElementById("area-jawaban")) {
+        nilaiJawaban.addEventListener('input', function(event) {
+            layarJawaban.innerText = event.target.value
+        })
+    }
 }
 
 
 // Timer per Detik
 function mulaiTimer() {
     inisialisasiGames()
-    papanWaktu.innerText = sisaWaktu + " Dtk"
+
+    papanWaktuGlobal.innerText = waktuGlobal
     
     mesinWaktu = setInterval(function() {
-    sisaWaktu = sisaWaktu - 1
+    waktuGlobal--;
+    waktuSoal--;
+
+    papanWaktuGlobal.innerText = waktuGlobal
+    papanWaktuSoal.innerText = waktuSoal + " Detik"
         
-    if (sisaWaktu < 0) {
-        clearInterval(mesinWaktu)
-        document.getElementById("nilai1").innerText = "0"
-        document.getElementById("nilai2").innerText = "0"
+        if (waktuGlobal <= 0) {
+            clearInterval(mesinWaktu)
+            
+            localStorage.setItem("nama_terakhir", namaUser)
+            localStorage.setItem("skor_terakhir", skor)
+            localStorage.setItem("level_terakhir", batasAngka)
 
-        layarJawaban.innerText = ""
-        buttonGenerate.style.display = "inline-block"
-        buttonAksi.style.display = "none"
+            let skorLama = Number(localStorage.getItem("skor_tertinggi")) || 0
+            if(skor > skorLama) {
+                localStorage.setItem("skor_tertinggi", skor)
+            }
 
-        setTimeout(function(){
-            alert("waktu sudah habis")
-        }, 50)
-        } else {
-        papanWaktu.innerText = sisaWaktu + " Dtk"
+            fetch("database/api.php", {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json" 
+                },
+                body: JSON.stringify({
+                    nama: namaUser || "PLAYER",
+                    score: skor,
+                    level: batasAngka
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Respon dari PHP:", data);
+
+                window.location.href = "./rank.html";
+            })
+            .catch(error => {
+                console.error("Gagal mengirim ke database:", error);
+
+                window.location.href = "./rank.html";
+            });
         }
+        else if (waktuSoal <= 0) {
+            skor -= 3
+            if (skor < 0) skor = 0
+            papanSkor.innerText = skor + " Score"
+
+            kedipLayar()
+            waktuSoal = 5
+            papanWaktuSoal.innerText = waktuSoal + " Detik"
+
+            sedangMengecek = false
+            generateKuis()
+        }
+
     }, 1000)
+}
+
+if(document.getElementById("layar-result")) {
+    tampilLeaderboard()
 }
 
 
@@ -124,6 +218,7 @@ function pilihanGanda() {
 
 
 function inputJawaban() {
+    if (sedangMengecek) return
     if(nilaiJawaban.value == "") return
 
     checkAnswer(nilaiJawaban.value)
@@ -174,9 +269,12 @@ function buatAngkaSoal() {
 
 // Generate Number
 function generateKuis() {
-    clearTimeout(alarmText)
-    clearInterval(mesinWaktu)
-    mulaiTimer()
+    // clearTimeout(alarmText)
+    // clearInterval(mesinWaktu)
+    if (timerBerjalan === false) {
+        mulaiTimer()
+        timerBerjalan = true
+    }
 
     buttonGenerate.style.display = "none"
     areaSoal.style.display = "flex";
@@ -203,9 +301,9 @@ function generateKuis() {
 
         document.getElementById("jawaban-user").value = ""
         document.getElementById("jawaban-user").focus()
-
     }
 }
+
 
 // Layar Kuis Kedip
 function kedipLayar() {
@@ -218,8 +316,12 @@ function kedipLayar() {
     }, 100) 
 }
 
+
 // Fungsi Cek Jawaban
 function checkAnswer(pilihanUser) {
+    if (sedangMengecek) return
+    sedangMengecek = true
+
     let jawabanUser = Number(pilihanUser)
     layarJawaban.innerText = jawabanUser;
 
@@ -235,15 +337,19 @@ function checkAnswer(pilihanUser) {
         kedipLayar()
 
         setTimeout(function() {
-            layarJawaban.innerText = ""
+            layarJawaban.innerText = "?"
+            waktuSoal = 5
+            papanWaktuSoal.innerText = waktuSoal + " Detik"
+
             generateKuis()
+            sedangMengecek = false
         }, 600);
             
     } else {
         areaSoal.style.display = "none";
         areaJawaban.style.display = "none";
         pesanTengah.style.display = "block";
-        layarJawaban.innerText = ""
+        layarJawaban.innerText = "?"
 
         skor -= 3
         if (skor < 0) skor = 0
@@ -255,20 +361,208 @@ function checkAnswer(pilihanUser) {
 
         alarmText = setTimeout(function(){
             layarKuis.classList.remove("layar-error")
-            layarJawaban.innerText = ""
-            generateKuis() // Fungsi Generate Kuis/Soal
+            layarJawaban.innerText = "?"
+            waktuSoal = 5
+            papanWaktuSoal.innerText = waktuSoal + " Detik"
+
+            generateKuis() 
+            sedangMengecek = false
         }, 800)
     }  
 }
 
 // Fungsi Reset Form
 function formReset() {
-    clearInterval(mesinWaktu)
-    buttonGenerate.style.display = "inline-block"
-    buttonAksi.style.display = "none"
-    papanWaktu.innerText = sisaWaktu + " Dtk"
+    layarJawaban.innerText = "?"
+    nilaiJawaban.value = ""
 }
 
+// RECORD AND LEADERBOARD
+function gantiPapan() {
+    const tombol = document.getElementById("ganti-layar-papan")
+    kedipLayar()
+
+    if(modePapan === "result") {
+        layarResult.style.display = "none"
+        layarLeaderboard.style.display = "block"
+        tombol.innerText = "Hasil"
+        modePapan = "leaderboard"
+    } else {
+        layarResult.style.display = "block"
+        layarLeaderboard.style.display = "none"
+        tombol.innerText = "Peringkat"
+        modePapan = "result"
+    }
+}
+
+// KIRIM LEADERBOARD
+function tampilLeaderboard() {
+    const namaPlayer = localStorage.getItem("nama_terakhir") || "NO NAME"
+    const rekorSkor  = localStorage.getItem("skor_tertinggi") || 0
+    const levelPlayer = localStorage.getItem("level_terakhir") || 1
+    const skorPlayer = localStorage.getItem("skor_terakhir") || 0
+
+    document.getElementById("nama-user").innerText = namaPlayer
+    document.getElementById("papan-skor").innerText = skorPlayer
+    document.getElementById("papan-rekor").innerText = rekorSkor
+    document.getElementById("level-game").innerText = levelPlayer
+
+    fetch(`database/api.php?skorku=${skorPlayer}`) 
+        .then(response => response.json())
+        .then(data => {
+            console.log("Hasil Juara dari Database: ", data)
+
+            const tbody = document.querySelector(".tabel-peringkat tbody")
+            tbody.innerHTML = ""
+
+            let masukTop10 = false
+
+            data.top_10.forEach((item, index) => {
+                const tr = document.createElement('tr')
+                if (index === 0) tr.classList.add('juara')
+
+                if (item.nama === namaPlayer && item.score === skorPlayer) {
+                    masukTop10 = true
+                    tr.classList.add('baris-pemain')
+                }
+                
+                tr.innerHTML = `
+                    <td>${index + 1}.</td>
+                    <td>${item.nama}</td>
+                    <td>${item.score}</td>
+                `;
+
+                tbody.appendChild(tr)
+            });
+
+            if (masukTop10 === false) {
+                const trBawah = document.createElement('tr');
+                trBawah.classList.add("baris-pemain")
+
+                trBawah.innerHTML = `
+                    <td>${data.rank_saya}.</td>
+                    <td>${namaPlayer} (Me)</td>
+                    <td>${skorPlayer}</td>
+                `;
+
+                const tfoot = document.querySelector('.tabel-peringkat tfoot')
+
+                tfoot.appendChild(trBawah)
+            }
+            
+
+        })
+        .catch(err => console.error("Terjadi kesalahan: ", err))
+
+    // console.log(skorPlayer)
+    // console.log(namaPlayer)
+    // console.log(rekorSkor)
+    // console.log(levelPlayer)
+
+}
+
+
+
+// Fungsi Check halaman Beranda
+function validasiFormKuis() {
+    const operasiKuis   = document.querySelector('input[name="jenis-operasi"]:checked')
+    const speedTimer    = document.querySelector('input[name="speed-timer"]:checked')
+    const modeKuis      = document.querySelector('input[name="mode-kuis"]:checked')
+    
+    let textPeringatan = ""
+    
+    if (!operasiKuis) {
+        textPeringatan = "PILIH OPERASI MATEMATIKA"
+    } else if(!speedTimer) {
+        textPeringatan = "PILIH WAKTU PENGERJAAN"
+    } else if(!modeKuis) {
+        textPeringatan = "PILIH MODE KUIS"
+    } 
+    
+    if(textPeringatan !== "") {
+        document.getElementById("text-peringatan").innerText = textPeringatan
+        document.getElementById("modal-peringatan").style.display = "flex"
+        return false
+    }
+    
+    return true
+}
+
+
+function tutupPeringatan() {
+    document.getElementById("modal-peringatan").style.display = "none"
+}
+
+function kedipLayar() {
+    const layar = document.getElementById("layar-kuis")
+
+    layar.style.backgroundColor = "#0f380f"
+    layar.style.color = "#8bac0f"
+
+    setTimeout(function() {
+        layar.style.backgroundColor = ""
+        layar.style.color = ""
+    }, 100) 
+}
+
+
+
+function tambahLevel() {
+    if(levelSekarang < 10) {
+        levelSekarang++
+    }
+
+    document.getElementById("angka-slider").innerText = levelSekarang
+    document.getElementById("angka-level").innerText = levelSekarang
+    document.getElementById("hidden-level").value = levelSekarang
+    kedipLayar()
+}
+
+function kurangLevel() {
+    if(levelSekarang > 1) {
+        levelSekarang--
+    }
+    
+    document.getElementById("angka-slider").innerText = levelSekarang
+    document.getElementById("angka-level").innerText = levelSekarang
+    document.getElementById("hidden-level").value = levelSekarang
+    kedipLayar()
+}
+
+function gantiLayar(idTujuan, textNew) {
+    document.getElementById(idTujuan).innerText = textNew
+    kedipLayar()
+}
+
+// MODAL NAMA
+function simpanNama() {
+    const nama = document.getElementById("input-nama").value
+    let textPeringatan = ""
+
+    if(nama === "") {
+        textPeringatan = "MASUKKAN NAMA ANDA"
+    }
+
+    if(textPeringatan !== "") {
+        document.getElementById("text-peringatan").innerText = textPeringatan
+        document.getElementById("modal-peringatan").style.display = "flex"
+        return false
+    }
+    
+    document.getElementById("nama-user").innerText = nama
+    document.getElementById("hidden-nama").value = nama
+    
+    // Menghilangkan Modal
+    document.getElementById("modal-nama").style.display = "none"
+    return true
+}
+
+
 function backHome() {
-    window.location.href = "./home.html"
+    window.location.href = "./index.html?status=selesai"
+}
+
+function backQuiz() {
+    const queryLama = localStorage.getItem("query_player_terakhir") || ""
+    window.location.href = "./quiz.html" + queryLama
 }
