@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz - Game Boy Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #2d2b38;
+            --case-gameboy: #c4bebb;
+            --case-border: #8f8a87;
+
+            /* WARNA FRAME BEZEL ABU-ABU */
+            --screen-bezel: #545263;
+            --screen-bezel-border: #3c3b47;
+
+            --screen-bg: #8bac0f;
+            --screen-text: #0f380f;
+
+            /* Warna Tombol & Bayangan Tebal */
+            --btn-blue: #0284c7;   --shadow-blue: #0369a1;
+            --btn-red: #e11d48;    --shadow-red: #be123c;
+            --btn-green: #388e3c;  --shadow-green: #1b5e20;
+            --btn-gold: #c79a00;   --shadow-gold: #705600;
+            --btn-dark: #424242;   --shadow-dark: #1a1a1a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Press Start 2P', monospace;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .main-content {
+            background: var(--case-gameboy);
+            border: 4px solid var(--case-border);
+            border-bottom: 8px solid #6b6765;
+            border-radius: 16px 16px 40px 16px;
+            padding: 22px 18px 26px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+        }
+
+        /* ==========================================================================
+           BINGKAI ABU-ABU DI LUAR LAYAR (FRAME BEZEL DENGAN TEKS LIVE)
+           ========================================================================== */
+        .bezel-layar {
+            background-color: var(--screen-bezel);
+            border: 3px solid var(--screen-bezel-border);
+            padding: 12px 14px 16px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .bezel-top {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-left: 2px;
+        }
+
+        .tag-live {
+            font-size: 0.5rem;
+            color: #9da0b3;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        /* ==========================================================================
+           LAYAR LCD ASLI KODEMU (KONSISTEN 220px, TANPA GARIS-GARIS)
+           ========================================================================== */
+        .layar-kuis {
+            background-color: var(--screen-bg);
+            color: var(--screen-text);
+            border: 3px solid #306230;
+            border-radius: 4px;
+            padding: 12px 14px;
+            
+            /* Kunci tinggi konsisten 220px */
+            height: 220px;
+            min-height: 220px;
+            
+            box-shadow: inset 2px 2px 8px rgba(15, 56, 15, 0.45);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 1. STATUS HEADER ATAS (3 KOLOM PRESISI) */
+        .status-game {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            align-items: center;
+            font-size: 0.52rem;
+            line-height: 1.5;
+            border-bottom: 2px dashed rgba(15, 56, 15, 0.3);
+            padding-bottom: 4px;
+        }
+
+        .status-game span:nth-child(2) {
+            text-align: center;
+        }
+
+        .status-game span:nth-child(3) {
+            text-align: right;
+        }
+
+        /* Indikator Skor Muncul (+5 / -3) */
+        .indikator-skor {
+            position: absolute;
+            top: 24px;
+            right: 14px;
+            font-size: 0.72rem;
+            font-weight: bold;
+        }
+
+        /* 2. AREA SOAL MATEMATIKA (TENGAH LAYAR) */
+        .area-pertanyaan {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+            margin: auto 0;
+        }
+
+        .kotak-jawaban {
+            border-bottom: 3px solid var(--screen-text);
+            min-width: 48px;
+            display: inline-block;
+            text-align: center;
+            padding-bottom: 2px;
+        }
+
+        .pesan-tengah {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-align: center;
+            margin: auto 0;
+            display: none;
+        }
+
+        /* 3. SCENE RESULT & STATISTIK */
+        .judul-retro {
+            font-size: 0.6rem;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            line-height: 1.4;
+        }
+
+        .result-stats {
+            font-size: 0.52rem;
+            line-height: 1.9;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(15, 56, 15, 0.25);
+            padding: 2px 0;
+        }
+
+        .result-row span {
+            font-weight: bold;
+        }
+
+        /* 4. TABEL LEADERBOARD PERINGKAT */
+        .tabel-peringkat {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.48rem;
+            line-height: 1.7;
+        }
+
+        .tabel-peringkat th {
+            border-bottom: 2px dashed var(--screen-text);
+            padding-bottom: 3px;
+            font-size: 0.5rem;
+        }
+
+        .tabel-peringkat td {
+            padding: 2px 0;
+        }
+
+        .tabel-peringkat th:first-child,
+        .tabel-peringkat td:first-child {
+            width: 18%;
+            text-align: left;
+        }
+
+        .tabel-peringkat th:nth-child(2),
+        .tabel-peringkat td:nth-child(2) {
+            width: 50%;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tabel-peringkat th:last-child,
+        .tabel-peringkat td:last-child {
+            width: 32%;
+            text-align: right;
+        }
+
+        .juara-1 {
+            font-weight: bold;
+            background-color: rgba(15, 56, 15, 0.12);
+        }
+
+        /* ==========================================================================
+           TOMBOL 3D DI BAWAH
+           ========================================================================== */
+        .title-section {
+            font-size: 0.58rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        .grid-opsi-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .grid-opsi-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .btn-3d {
+            border: 2px solid #111;
+            padding: 14px 8px;
+            font-size: 0.75rem;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 6px;
+            text-transform: uppercase;
+            transition: transform 0.05s, box-shadow 0.05s;
+            width: 100%;
+        }
+
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 transparent !important;
+        }
+
+        .btn-blue  { background-color: var(--btn-blue);  border-color: #0369a1; box-shadow: 0 5px 0 var(--shadow-blue); }
+        .btn-red   { background-color: var(--btn-red);   border-color: #be123c; box-shadow: 0 5px 0 var(--shadow-red); }
+        .btn-green { background-color: var(--btn-green); border-color: #1b5e20; box-shadow: 0 5px 0 var(--shadow-green); }
+        .btn-gold  { background-color: var(--btn-gold);  border-color: #705600; box-shadow: 0 5px 0 var(--shadow-gold); }
+        .btn-dark  { background-color: var(--btn-dark);  border-color: #1a1a1a; box-shadow: 0 5px 0 var(--shadow-dark); width: 100%; font-size: 0.58rem; }
+
+        .input-manual {
+            width: 100%;
+            background: #fff;
+            border: 3px solid #111;
+            box-shadow: inset 3px 3px 0 rgba(0,0,0,0.15);
+            padding: 12px;
+            font-size: 0.8rem;
+            text-align: center;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        hr {
+            border: 0;
+            border-top: 2px dashed #9e9a98;
+            margin: 16px 0;
+        }
+
+        .layar-error {
+            background-color: var(--screen-text) !important;
+            color: var(--screen-bg) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="main-content">
+
+            <!-- BINGKAI ABU-ABU LUAR (DARI GAMBAR) -->
+            <div class="bezel-layar">
+                <div class="bezel-top">
+                    <span class="tag-live">LIVE</span>
+                </div>
+
+                <!-- LCD SCREEN (SEMUA ISI TEKS TETAP PAKAI PUNYAMU LAMA) -->
+                <div class="layar-kuis" id="layar-kuis">
+
+                    <!-- 1. SCENE GAMEPLAY (AKTIF SAAT MAIN) -->
+                    <div id="scene-gameplay" style="display: flex; flex-direction: column; height: 100%; justify-content: space-between;">
+                        
+                        <!-- Header Info 3 Kolom -->
+                        <div class="status-game">
+                            <span>>PLY:<span id="nama-pemain">RIZAL</span></span>
+                            <span>>SKR:<span id="papan-skor">0</span></span>
+                            <span>>WKT:<span id="papan-waktu">10</span>s</span>
+                        </div>
+
+                        <span id="indikator-skor" class="indikator-skor"></span>
+
+                        <!-- Soal Matematika Tengah -->
+                        <div class="area-pertanyaan" id="area-pertanyaan">
+                            <span id="soal-n1">7</span>
+                            <span id="soal-op">+</span>
+                            <span id="soal-n2">5</span>
+                            <span>=</span>
+                            <span class="kotak-jawaban" id="layar-jawaban">?</span>
+                        </div>
+
+                        <div class="pesan-tengah" id="pesan-salah">SALAH!</div>
+
+                        <!-- Footer Kecil Info Level & Mode -->
+                        <div style="font-size: 0.45rem; display: flex; justify-content: space-between; border-top: 1px dashed rgba(15, 56, 15, 0.25); padding-top: 4px;">
+                            <span>>LVL: 1</span>
+                            <span>MATH QUIZ v1.0</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. SCENE RESULT (RINGKASAN AKHIR) -->
+                    <div id="scene-result" style="display: none; height: 100%;">
+                        <h3 class="judul-retro teks-kedip">== GAME OVER ==</h3>
+                        <div class="result-stats">
+                            <div class="result-row"><p>> PLAYER</p><span>RIZAL</span></div>
+                            <div class="result-row"><p>> SCORE</p><span id="skor-akhir">85</span></div>
+                            <div class="result-row"><p>> RECORD</p><span>120</span></div>
+                            <div class="result-row"><p>> RANK</p><span>A</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 3. SCENE LEADERBOARD (TOP SKOR) -->
+                    <div id="scene-leaderboard" style="display: none; height: 100%;">
+                        <h3 class="judul-retro">== TOP PLAYERS ==</h3>
+                        <table class="tabel-peringkat">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>NAME</th>
+                                    <th>SCORE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="juara-1"><td>1.</td><td>ADEL</td><td>120</td></tr>
+                                <tr><td>2.</td><td>RIZAL</td><td>85</td></tr>
+                                <tr><td>3.</td><td>ALEX</td><td>65</td></tr>
+                                <tr><td>4.</td><td>NOOB</td><td>40</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- AREA KONTROL INPUT (BAWAH) -->
+            <div id="kontrol-game">
+
+                <!-- 1. MODE PILIHAN GANDA -->
+                <div id="kontrol-pilihan" style="display: block;">
+                    <p class="title-section">Pilih Jawaban:</p>
+                    <div class="grid-opsi-4">
+                        <button type="button" class="btn-3d btn-blue" onclick="tebakOpsi(this.innerText)">12</button>
+                        <button type="button" class="btn-3d btn-red" onclick="tebakOpsi(this.innerText)">10</button>
+                        <button type="button" class="btn-3d btn-green" onclick="tebakOpsi(this.innerText)">15</button>
+                        <button type="button" class="btn-3d btn-gold" onclick="tebakOpsi(this.innerText)">8</button>
+                    </div>
+                </div>
+
+                <!-- 2. MODE INPUT MANUAL -->
+                <div id="kontrol-input" style="display: none;">
+                    <p class="title-section">Ketik Jawaban:</p>
+                    <input type="number" id="input-angka" class="input-manual" placeholder="Ketik angka..." oninput="ketikRealtime(this.value)">
+                    <div class="grid-opsi-2">
+                        <button type="button" class="btn-3d btn-red" onclick="resetInput()">Hapus</button>
+                        <button type="button" class="btn-3d btn-green" onclick="submitManual()">Submit</button>
+                    </div>
+                </div>
+
+                <!-- 3. KONTROL HASIL AKHIR (GAME OVER) -->
+                <div id="kontrol-hasil" style="display: none;">
+                    <div class="grid-opsi-2">
+                        <button type="button" id="btn-toggle-papan" class="btn-3d btn-gold" onclick="tukarScenePapan()">Peringkat</button>
+                        <button type="button" class="btn-3d btn-green" onclick="mainLagi()">Main Lagi</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SAKLAR SIMULASI DEMO -->
+            <hr>
+            <p class="title-section" style="font-size: 0.5rem; text-align: center;">Simulasi Mode:</p>
+            <div class="grid-opsi-2" style="margin-bottom: 8px;">
+                <button type="button" class="btn-3d btn-dark" onclick="gantiModeDemo('pilihan')">Mode Pilihan</button>
+                <button type="button" class="btn-3d btn-dark" onclick="gantiModeDemo('input')">Mode Input</button>
+            </div>
+            <button type="button" class="btn-3d btn-dark" onclick="gantiModeDemo('selesai')">Simulasi Waktu Habis (Result)</button>
+
+        </div>
+    </div>
+
+    <script>
+        const sceneGameplay = document.getElementById("scene-gameplay");
+        const sceneResult = document.getElementById("scene-result");
+        const sceneLeaderboard = document.getElementById("scene-leaderboard");
+
+        const kontrolPilihan = document.getElementById("kontrol-pilihan");
+        const kontrolInput = document.getElementById("kontrol-input");
+        const kontrolHasil = document.getElementById("kontrol-hasil");
+        const layarJawaban = document.getElementById("layar-jawaban");
+        const layar = document.getElementById("layar-kuis");
+
+        let modePapan = "result";
+
+        function ketikRealtime(val) {
+            layarJawaban.innerText = val !== "" ? val : "?";
+        }
+
+        function resetInput() {
+            document.getElementById("input-angka").value = "";
+            layarJawaban.innerText = "?";
+        }
+
+        function tebakOpsi(angka) {
+            layarJawaban.innerText = angka;
+            kedipLayar();
+        }
+
+        function submitManual() {
+            const val = document.getElementById("input-angka").value;
+            if (val === "") return;
+            tebakOpsi(val);
+            resetInput();
+        }
+
+        function kedipLayar() {
+            layar.style.backgroundColor = "#0f380f";
+            layar.style.color = "#8bac0f";
+            setTimeout(() => {
+                layar.style.backgroundColor = "";
+                layar.style.color = "";
+            }, 90);
+        }
+
+        function tukarScenePapan() {
+            const btn = document.getElementById("btn-toggle-papan");
+            kedipLayar();
+
+            if (modePapan === "result") {
+                sceneResult.style.display = "none";
+                sceneLeaderboard.style.display = "block";
+                btn.innerText = "Hasil";
+                modePapan = "leaderboard";
+            } else {
+                sceneResult.style.display = "block";
+                sceneLeaderboard.style.display = "none";
+                btn.innerText = "Peringkat";
+                modePapan = "result";
+            }
+        }
+
+        function mainLagi() {
+            gantiModeDemo("pilihan");
+        }
+
+        function gantiModeDemo(mode) {
+            kedipLayar();
+
+            sceneGameplay.style.display = "none";
+            sceneResult.style.display = "none";
+            sceneLeaderboard.style.display = "none";
+            kontrolPilihan.style.display = "none";
+            kontrolInput.style.display = "none";
+            kontrolHasil.style.display = "none";
+
+            if (mode === "pilihan") {
+                sceneGameplay.style.display = "flex";
+                kontrolPilihan.style.display = "block";
+                layarJawaban.innerText = "?";
+            } else if (mode === "input") {
+                sceneGameplay.style.display = "flex";
+                kontrolInput.style.display = "block";
+                resetInput();
+            } else if (mode === "selesai") {
+                sceneResult.style.display = "block";
+                kontrolHasil.style.display = "block";
+                modePapan = "result";
+                document.getElementById("btn-toggle-papan").innerText = "Peringkat";
+            }
+        }
+    </script>
+</body>
+</html>

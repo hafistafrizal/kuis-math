@@ -1,81 +1,163 @@
 * {
     font-family: 'Press Start 2P', monospace;
     box-sizing: border-box;
-}
-
-:root {
-    --bg-body: #ffffff;
-    --bg-card: #e2e8f0;
-    --border-dark: #0f172a;
-
-    --btn-blue: #38bdf8;   --shadow-blue: #0284c7;
-    --btn-red: #fb7185;    --shadow-red: #e11d48;
-    --btn-green: #4ade80;  --shadow-green: #16a34a;
-    --btn-gold: #facc15;   --shadow-gold: #ca8a04;
-
-    --btn-dark: #bbbbbb;   --shadow-dark: #90949d;
-
-    --bg-screen: #8bac0f;
-    --text-screen: #0f380f;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-
-}
-
-.container {
     background-color: var(--bg-body);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
     padding: 20px 10px;
 }
 
+/* COLOR PALLETS */
+:root {
+    --bg-body: #2d2b38;
+    --bg-card: #c4bebb;
+    --border-dark: #8f8a87;
+    --screen-bezel: #545263;
+
+    --bg-screen: #8bac0f;
+    --text-screen: #0f380f;
+
+    --btn-blue: #0284c7;   --shadow-blue: #0369a1;  --border-blue: #0369a1;
+    --btn-red: #e11d48;    --shadow-red: #be123c;   --border-red: #be123c;
+    --btn-green: #388e3c;  --shadow-green: #1b5e20; --border-green: #1b5e20;
+    --btn-gold: #c79a00;   --shadow-gold: #705600;  --border-gold: #705600;
+    --btn-dark: #424242;   --shadow-dark: #1a1a1a;  --border-dark: #1a1a1a;
+
+    --btn-start-retro: #eab308;
+    --border-start-retro: #713f12;
+    --shadow-start-retro: #a16207;
+}
+
+
 .main-content {
     background-color: var(--bg-card);
+    border: 4px solid #8f8a87;
+    border-bottom: 8px solid #6b6765;
+    border-radius: 16px 16px 40px 16px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+
     width: 100%;
     max-width: 450px;
-    padding: 25px;
-    border-radius: 10px;
+    padding: 22px 18px 26px;
 
     /* min-height: 540px; */
+}
 
-    border: 4px solid #0f172a;
-    box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.2);
+/* BEZEL LAYAR */
+.bezel-layar {
+    background-color: #545263;
+    padding: 18px 14px 14px;
+    border-radius: 10px 10px 28px 10px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6);
+
+}
+
+.bezel-top {
+    color: #b0aeb8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 10px;
+    font-size: 0.45rem;
+}
+
+#btn-edit-nama {
+    background-color: transparent; 
+    color: #b0aeb8;                
+    font-size: 0.4rem;             
+    border: 1px solid #b0aeb8;     
+    border-radius: 3px;            
+    padding: 3px 5px;              
+    cursor: pointer;
+    font-family: inherit;          
+    transition: all 0.2s;          
+}
+
+#btn-edit-nama:hover {
+    background-color: #b0aeb8;
+    color: #545263;                
 }
 
 /* LAYAR GAMES */
 .layar-kuis {
     background-color: var(--bg-screen);
     color: var(--text-screen);
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-    border: 4px solid #0f172a;
-
-    box-shadow: inset 5px 5px 0 rgba(0, 0, 0, 0.15);
+    padding: 12px 14px;
+    border-radius: 4px;
+    border: 3px solid #306230;
+    box-shadow: inset 2px 2px 6px rgba(15, 56, 15, 0.45);
     text-transform: uppercase;
+    height: 220px;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    /* flex-direction: column; */
+    justify-content: space-between;
+    text-align: center;
 
-    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
     /* width: 100%; */
 }
 
-.layar-kuis h2 {
+.layar-gameplay {
+    background-color: var(--bg-screen);
+    color: var(--text-screen);
+    padding: 12px 14px;
+    border-radius: 4px;
+    border: 3px solid #306230;
+    box-shadow: inset 2px 2px 6px rgba(15, 56, 15, 0.45);
+    text-transform: uppercase;
+    height: 220px;
+    min-height: 220px;
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+
+    position: relative;
+    overflow: hidden;
+}
+
+h2 {
     font-size: 1rem;
     margin: 0 0 15px 0;
     line-height: 1.4;
 }
 
+/* .title-retro {
+    font-size: 0.7rem;
+
+} */
+
 .status-info {
-    font-size: 0.55rem;
-    line-height: 1.8;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px 12px;
-    text-align: left; 
+    font-size: 0.52rem;
+    line-height: 1.9;
+    width: 90%;
+    margin: 0 auto;
+    text-transform: uppercase;
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px dashed rgba(15, 56, 15, 0.25);
+}
+
+.status-row span {
+    font-weight: bold;
+    letter-spacing: 0.8px;
 }
 
 .status-info p {
@@ -84,60 +166,103 @@ body {
     white-space: nowrap; 
 }
 
-p {
-    margin: 0;
-}
-
 .title-section {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     margin: 0 0 8px 0;
     text-transform: uppercase;
 }
 
-.nilai-operator {
+/* .nilai-operator {
     display: flex;
     flex-direction: row;
     align-items: start;
     gap: 15px;
-}
+} */
 
-.papan-user {
+/* .papan-user {
     display: flex;
     flex-direction: row;
     align-items: start;
     gap: 5px;
+} */
+
+
+
+
+.status-game {
+    display: grid;
+    /* justify-content: space-between; */
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    font-size: 0.55rem;
+    line-height: 1.5;
+    border-bottom: 2px dashed rgba(15, 56, 15, 0.3);
+    padding-bottom: 4px;
 }
 
-.kuis-games {
+.status-kiri {
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status-tengah {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.status-kanan {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.kotak-jawaban {
+    border-bottom: 3px solid var(--text-screen);
+    min-width: 48px;
+    display: inline-block;
+    text-align: center;
+    padding-bottom: 2px;
+}
+
+.kuis-games, #area-soal {
     display: flex;
-    flex-direction: row;
+    /* flex-direction: row; */
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    margin-top: 15px;
-
-    font-size: 1.4rem;
+    gap: 8px;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+    margin: auto 0;
 }
 
-.kuis-info {
+.status-bawah-game {
+    font-size: 0.45rem;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px dashed rgba(15, 56, 15, 0.3);
+    padding-top: 4px;
+}
+
+/* .kuis-info {
     font-size: 0.6rem;
     line-height: 2.2;
     display: flex;
     justify-content: space-between;
-}
+} */
 
 .grid-operasi {
     display: grid;
     gap: 15px;
     grid-template-columns: 1fr 1fr;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
 }
 
 .grid-timer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 15px;
-    margin-bottom: 14px;
+    margin-bottom: 20px;
 }
 
 .title-range {
@@ -147,8 +272,56 @@ p {
 }
 
 .start-kuis {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 } 
+
+
+/* TABEL PERINGKAT */
+.tabel-peringkat {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.48rem;
+    line-height: 1.7;
+}
+
+.tabel-peringkat th {
+    padding-bottom: 3px;
+    font-size: 0.5rem;
+}
+
+.tabel-peringkat td {
+    padding: 2px 0;
+    padding-right: 6px;   
+}
+
+.tabel-peringkat th:first-child,
+.tabel-peringkat td:first-child {
+    width: 18%;
+    text-align: left;
+}
+
+.tabel-peringkat th:nth-child(2),
+.tabel-peringkat td:nth-child(2) {
+    width: 50%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tabel-peringkat th:last-child,
+.tabel-peringkat td:last-child {
+    width: 32%;
+    text-align: right;
+}
+
+.tabel-peringkat tbody .juara td {
+    font-weight: bold;
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    /* background-color: rgba(15, 56, 15, 0.12); */
+}
 
 /* RADIO STYLE */
 input[type="radio"] {
@@ -156,19 +329,19 @@ input[type="radio"] {
 }
 
 .radio-item label, .btn-3d{
-    display: block;
+    border: 2px solid #111;
+    color: #fff;
+    padding: 12px 6px;
+    font-size: 0.5rem;
     text-align: center;
-
-    font-size: 0.65rem;
-    padding: 10px 8px;
-    border: 4px solid #0f172a;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    color: #0f172a;
-    line-height: 1.5;
-    margin-bottom: 6px;
     text-transform: uppercase;
-    transition: transform 0.1s, box-shadow 0.1s;
+    transition: transform 0.05s, box-shadow 0.05s;
+    display: block;
+
+    /* margin-bottom: 6px; */
+    /* line-height: 1.5; */
     width: 100%;
 }
 
@@ -176,18 +349,34 @@ input[type="radio"] {
     display: block;
     text-align: center;
 
-    font-size: 0.7rem;
+    font-size: 1.2rem;
     padding: 15px;
-    border: 4px solid #0f172a;
+    /* border: 4px solid #0f172a; */
     border-radius: 5px;
     cursor: pointer;
-    color: #0f172a;
-    line-height: 1.5;
+    color: #fff;
+    line-height: 1.8;
     margin-bottom: 6px;
     text-transform: uppercase;
     transition: transform 0.1s, box-shadow 0.1s;
     width: 100%;
 }
+
+.btn-start {
+    display: block;
+    text-align: center;
+    padding: 15px;
+    color: #ffffff; /* Teks putih agar kontras */
+    font-size: 0.9rem;
+    padding: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid #fff;
+    text-transform: uppercase;
+    transition: transform 0.1s, box-shadow 0.1s;
+    width: 100%;
+}
+
 
 .radio-item label:hover, .btn-3d:hover {
     filter: none;
@@ -195,51 +384,48 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked + label {
-
-    transform: translateY(6px);
-    box-shadow: 0 0 0 transparent !important;
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #111 !important;
 }
 
 /* COLORING BUTTON */
 .label-blue {
     background-color: var(--btn-blue);
+    border-color: var(--border-blue) !important;
     box-shadow: 0 6px 0 var(--shadow-blue);
 }
 
 .label-red {
     background-color: var(--btn-red);
+    border-color: var(--border-red) !important;
     box-shadow: 0 6px 0 var(--shadow-red);
 }
 
 .label-green {
     background-color: var(--btn-green);
+    border-color: var(--border-green) !important;
     box-shadow: 0 6px 0 var(--shadow-green);
 }
 
 .label-gold {
     background-color: var(--btn-gold);
+    border-color: var(--border-gold) !important;
     box-shadow: 0 6px 0 var(--shadow-gold);
 }
 
 .label-dark {
     background-color: var(--btn-dark);
+    border-color: var(--border-dark) !important;
     box-shadow: 0 6px 0 var(--shadow-dark);
 }
 
-.btn-start {
-    background-color: var(--btn-gold);
-    --shadow-color: var(--shadow-gold);
-    box-shadow: 0 6px 0 var(--shadow-color);
-
-    color: #0f172a;
-    width: 100%;
-    font-size: 0.9rem;
-    padding: 20px;
-    border-radius: 5px;
-    border: 4px solid #0f172a;
-    margin-top: 10px;
-    margin-bottom: 6px;
+.label-main-button {
+    background-color: var(--btn-start-retro);
+    border-color: var(--border-start-retro) !important;
+    box-shadow: 0 6px 0 var(--shadow-start-retro);
 }
+
+
 
 .btn-start:active, .btn-3d:active, .btn-3d-games:active {
     transform: translateY(6px);
@@ -264,9 +450,9 @@ input[type="radio"]:checked + label {
     color: var(--text-screen);
     text-align: center;
     padding: 10px 8px;
-    border: 4px solid #0f172a;
-    box-shadow: inset 4px 4px 0 rgba(0,0,0,0.15);
-    font-size: 1rem;
+    border: 3px solid #306230;
+    box-shadow: inset 2px 2px 6px rgba(15, 56, 15, 0.45);
+    font-size: 0.6rem;
     width: 200px;
 }
 
@@ -284,6 +470,12 @@ input[type="radio"]:checked + label {
     z-index: 1000;
 }
 
+.text-peringatan {
+    margin-bottom: 20px; 
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
 .modal-box {
     background-color: var(--bg-card);
     border: 4px solid #0f172a;
@@ -291,15 +483,21 @@ input[type="radio"]:checked + label {
     border-radius: 10px;
     padding: 20px;
     text-transform: uppercase;
+    width: 100%;
+    max-width: 450px;
 }
 
-.input-content {
-    border: 4px solid #0f172a;
-    box-shadow: inset 4px 4px 0 rgba(0, 0, 0, 0.1);
-    font-size: 0.8rem;
-    padding: 15px;
+.input-manual {
     width: 100%;
-    margin-bottom: 25px;
+    background: #fff;
+    border: 3px solid #111;
+    box-shadow: inset 3px 3px 0 rgba(0,0,0,0.15);
+    padding: 12px;
+    font-size: 0.8rem;
+    text-align: center;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    outline: none;
 }
 
 #mode-pilih, #mode-input {
@@ -336,3 +534,287 @@ input[type="radio"]:checked + label {
     font-weight: bold;
     animation: kedip-indikator 0.2s 3;
 }
+
+hr {
+    border: 0;
+    border-top: 2px dashed #9e9a98;
+    margin: 14px 0;
+}
+
+
+.layar-leaderboard {
+    max-height: 145px;         
+    overflow-y: auto;        
+    overflow-x: hidden;
+    padding-right: 4px;
+
+    scrollbar-width: thin; 
+    scrollbar-color: var(--text-screen) rgba(15, 56, 15, 0.1);
+}
+
+.tabel-peringkat thead th {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-screen);  
+    color: #0f380f;             
+    z-index: 2;
+    letter-spacing: 2px;   
+    padding: 5px 0;
+    padding-right: 6px;             
+    border-bottom: 2px dashed var(--text-screen);
+}
+
+.tabel-peringkat tfoot th,
+.tabel-peringkat tfoot td {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--bg-screen); 
+    z-index: 2;
+    
+}
+
+.tabel-peringkat tfoot .baris-pemain td,
+.tabel-peringkat tbody .baris-pemain td {
+    background-color: #7b9c0f;
+    color: var(--text-screen);
+}
+
+.layar-leaderboard::-webkit-scrollbar {
+    width: 8px; 
+}
+
+.layar-leaderboard::-webkit-scrollbar-track {
+    background: rgba(15, 56, 15, 0.1); 
+}
+
+.layar-leaderboard::-webkit-scrollbar-thumb {
+    background: var(--text-screen);
+    border-radius: 4px;
+}
+
+
+.wadah-waktu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+
+.teks-waktu-utama {
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 0.9;
+    padding: 0 4px;
+    z-index: 2;
+    text-shadow: 
+         1px  0px 0 var(--bg-screen),
+        -1px  0px 0 var(--bg-screen),
+         0px  1px 0 var(--bg-screen),
+         0px -1px 0 var(--bg-screen);
+}
+
+.teks-waktu-detik {
+    margin-top: 5px;
+    font-size: 0.45rem;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    color: var(--text-screen);
+    padding: 0 2px;
+    z-index: 2;
+    text-shadow: 
+         1px  0px 0 var(--bg-screen),
+        -1px  0px 0 var(--bg-screen),
+         0px  1px 0 var(--bg-screen),
+         0px -1px 0 var(--bg-screen);
+}
+
+
+.container-nyawa {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.layar-error .nyawa-img {
+    background-color: var(--bg-screen);
+}
+
+.nyawa-img {
+    display: block;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    background-color: var(--text-screen);
+    
+    -webkit-mask-image: url('./assets/pixel-heart.png');
+    mask-image: url('./assets/pixel-heart.png');
+    
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+}
+
+@keyframes kedip-arcade {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+
+.efek-game-over-raksasa {
+    font-size: 2.5rem !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+    animation: kedip-arcade 0.3s infinite;
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+
+.tampilan-result-baru {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    height: 100%;
+    width: 100%; 
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.judul-gameover {
+    font-size: 1rem;
+    margin-bottom: 6px;
+    text-align: center;
+    line-height: 1.5;
+    letter-spacing: 1px;
+}
+
+.pemain-teks {
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+}
+
+
+.wadah-skor-besar {
+    margin: auto 0; 
+}
+
+.teks-kecil {
+    font-size: 0.45rem;
+    letter-spacing: 1px;
+}
+
+.angka-raksasa {
+    font-size: 2.5rem;
+    margin: 4px 0;
+    text-shadow: 3px 3px 0px rgba(15, 56, 15, 0.2);
+}
+
+.rekor-teks {
+    opacity: 0.7; 
+}
+
+.info-bawah-result {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.45rem;
+    border-top: 2px dashed rgba(15, 56, 15, 0.3);
+    padding-top: 4px;
+    margin-top: 0;
+}
+
+.label-disabled,
+.btn-start:disabled {
+    background-color: #8f8a87;
+    border: 2px solid #6b6765 !important;
+    box-shadow: 0 6px 0 #6b6765;
+    color: #c4bebb;
+    cursor: not-allowed;
+}
+
+/* supaya tidak ikut "tertekan" saat diklik */
+.btn-start:disabled:active {
+    transform: none;
+    box-shadow: 0 6px 0 #6b6765 !important;
+}
+
+#layar-kuis > .status-info {
+    width: 100% !important;
+    height: 100%;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+#layar-leaderboard {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100% !important;
+}
+
+/* kotak pembungkus tidak scroll lagi, scroll pindah ke tbody */
+#layar-leaderboard .layar-leaderboard {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow: hidden;
+    padding-right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* tabel jadi 3 bagian bertumpuk: thead, tbody, tfoot */
+#layar-leaderboard .tabel-peringkat {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    width: 100% !important;
+    margin: 0;                      /* sebelumnya auto 0, penyebab di tengah */
+}
+
+#layar-leaderboard .tabel-peringkat thead,
+#layar-leaderboard .tabel-peringkat tbody,
+#layar-leaderboard .tabel-peringkat tfoot {
+    display: block;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;       /* lebar kolom ketiganya sama */
+}
+
+/* header dan footer tidak bergerak */
+#layar-leaderboard .tabel-peringkat thead,
+#layar-leaderboard .tabel-peringkat tfoot {
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+/* hanya Top 10 yang scroll */
+#layar-leaderboard .tabel-peringkat tbody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-color: var(--text-screen) rgba(15, 56, 15, 0.1);
+}
+
+/* supaya kolom NO / NAME / SCORE tetap lurus antar bagian */
+#layar-leaderboard .tabel-peringkat tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* ===== KONTROL DI BAWAH LAYAR ===== */
+.title-section {                  /* cetakan kecil di bodi Game Boy */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6b6765;
+    font-size: .5rem;
+    letter-spacing: 2px;
+}
+.title-section::after { content: ""; flex: 1; border-top: 2px solid #9e9a98; }
+.title-range .title-section::after { content: none; }

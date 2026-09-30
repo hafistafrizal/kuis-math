@@ -7,7 +7,6 @@ header("Content-Type: application/json");
 // echo json_encode($test_array);
 // echo "\n";
 
-
 // KONEKSI DATABASE
 $host       = "localhost";
 $username   = "root";
@@ -29,7 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
 
     $skorPemain = $_GET['skorku'] ?? 0;
 
-    $sql_top10 = "SELECT nama, score, level FROM leaderboard ORDER BY score DESC, id DESC LIMIT 10";
+    $sql_top10 = "SELECT nama, MAX(score) AS score, MAX(level) AS level 
+                    FROM leaderboard 
+                    GROUP BY nama
+                    ORDER BY score DESC, MAX(id) DESC 
+                    LIMIT 10";
     $result = $conn->query($sql_top10);
 
     $leaderboard = [];
@@ -51,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
 
         $real_rank = $row_rank['jumlah_tinggi'] + 1;
     }
-
 
     $respon_data = [
         'top_10' => $leaderboard,

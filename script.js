@@ -11,7 +11,7 @@ let waktuGlobal = 0
 let waktuSoal = 5
 let timerBerjalan = false
 let sedangMengecek = false
-
+let live = 3
 
 // Tangkap Parameter dari URL
 const querySring = window.location.search
@@ -82,8 +82,11 @@ function inisialisasiGames() {
         localStorage.setItem("query_player_terakhir", window.location.search);
     }
 
+    live = 3
+    updateTampilanHealt()
+
     if (speedTimer == "slow") waktuGlobal = 120
-    else if (speedTimer == "medium") waktuGlobal = 90
+    else if (speedTimer == "normal") waktuGlobal = 90
     else if (speedTimer == "fast") waktuGlobal = 60
     else waktuGlobal = 90
 
@@ -111,6 +114,44 @@ function inisialisasiGames() {
     }
 }
 
+function selesaiGame() {
+    clearInterval(mesinWaktu)
+    
+    localStorage.setItem("nama_terakhir", namaUser)
+    localStorage.setItem("skor_terakhir", skor)
+    localStorage.setItem("level_terakhir", batasAngka)
+    localStorage.setItem("waktu_terakhir", speedTimer || "Normal")
+    
+    const kunciRekor = "skor_tertinggi_" + namaUser
+    let skorLama = Number(localStorage.getItem(kunciRekor)) || 0
+    if(skor > skorLama) {
+        localStorage.setItem(kunciRekor, skor)
+    }
+    
+    fetch("database/api.php", {
+    method: "POST",
+    headers: { 
+        "Content-Type": "application/json" 
+    },
+    body: JSON.stringify({
+        nama: namaUser || "PLAYER",
+        score: skor,
+        level: batasAngka
+    })
+    })
+    .then(response => response.json())
+    .then(data => {
+    console.log("Respon dari PHP:", data);
+    
+    window.location.href = "./rank.html";
+    })
+    .catch(error => {
+    console.error("Gagal mengirim ke database:", error);
+    
+    window.location.href = "./rank.html";
+    });
+}
+
 
 // Timer per Detik
 function mulaiTimer() {
@@ -126,51 +167,34 @@ function mulaiTimer() {
     papanWaktuSoal.innerText = waktuSoal + " Detik"
         
         if (waktuGlobal <= 0) {
-            clearInterval(mesinWaktu)
-            
-            localStorage.setItem("nama_terakhir", namaUser)
-            localStorage.setItem("skor_terakhir", skor)
-            localStorage.setItem("level_terakhir", batasAngka)
-
-            let skorLama = Number(localStorage.getItem("skor_tertinggi")) || 0
-            if(skor > skorLama) {
-                localStorage.setItem("skor_tertinggi", skor)
-            }
-
-            fetch("database/api.php", {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json" 
-                },
-                body: JSON.stringify({
-                    nama: namaUser || "PLAYER",
-                    score: skor,
-                    level: batasAngka
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Respon dari PHP:", data);
-
-                window.location.href = "./rank.html";
-            })
-            .catch(error => {
-                console.error("Gagal mengirim ke database:", error);
-
-                window.location.href = "./rank.html";
-            });
+            tampilkanGameOver()
         }
         else if (waktuSoal <= 0) {
-            skor -= 3
-            if (skor < 0) skor = 0
-            papanSkor.innerText = skor + " Score"
+            live--
+            updateTampilanHealt()
 
-            kedipLayar()
-            waktuSoal = 5
-            papanWaktuSoal.innerText = waktuSoal + " Detik"
+            areaSoal.style.display = "none"
+            areaJawaban.style.display = "none"
+            pesanTengah.innerText = "TIME OUT!"
+            pesanTengah.style.display = "block"
 
-            sedangMengecek = false
-            generateKuis()
+            indikatorSkor.innerText = "MISS";
+            indikatorSkor.classList.add("text-muncul");
+            layarKuis.classList.add("layar-error");
+            
+            if (live <= 0) {
+                tampilkanGameOver()
+                return
+            }
+
+            setTimeout(function() {
+                layarKuis.classList.remove("layar-error");
+                waktuSoal = 5;
+                papanWaktuSoal.innerText = waktuSoal + " Detik";
+                
+                sedangMengecek = false;
+                generateKuis(); // Baru munculkan soal baru
+            }, 800);
         }
 
     }, 1000)
@@ -281,12 +305,12 @@ function generateKuis() {
     areaJawaban.style.display = "block";
     pesanTengah.style.display = "none";
     
+    
     indikatorSkor.innerText = ""
     indikatorSkor.classList.remove("text-muncul")
     buttonAksi.style.display = "block"
     
     buatAngkaSoal() // Function buat Angka Random Soal
-
     hitungJawaban() // Function Hitung Jawaban
 
     // CHECK MODE
@@ -348,18 +372,31 @@ function checkAnswer(pilihanUser) {
     } else {
         areaSoal.style.display = "none";
         areaJawaban.style.display = "none";
+        pesanTengah.innerText = "SALAH!!"
         pesanTengah.style.display = "block";
         layarJawaban.innerText = "?"
 
-        skor -= 3
-        if (skor < 0) skor = 0
+        live--
+        updateTampilanHealt()
 
-        indikatorSkor.innerText = "-3"
+        // skor -= 3
+        // if (skor < 0) skor = 0
+        // indikatorSkor.innerText = "-3"
+        // indikatorSkor.classList.add("text-muncul")
+        // papanSkor.innerText = skor + " Skor"
+        
+        indikatorSkor.innerText = "MISS"
         indikatorSkor.classList.add("text-muncul")
-        papanSkor.innerText = skor + " Skor"
         layarKuis.classList.add("layar-error");
 
-        alarmText = setTimeout(function(){
+        if (live <= 0) {
+            setTimeout(function() {
+                tampilkanGameOver()
+            }, 800)
+            return
+        }
+
+        alarmText = setTimeout(function() {
             layarKuis.classList.remove("layar-error")
             layarJawaban.innerText = "?"
             waktuSoal = 5
@@ -384,11 +421,11 @@ function gantiPapan() {
 
     if(modePapan === "result") {
         layarResult.style.display = "none"
-        layarLeaderboard.style.display = "block"
+        layarLeaderboard.style.display = "flex"
         tombol.innerText = "Hasil"
         modePapan = "leaderboard"
     } else {
-        layarResult.style.display = "block"
+        layarResult.style.display = "flex"
         layarLeaderboard.style.display = "none"
         tombol.innerText = "Peringkat"
         modePapan = "result"
@@ -398,14 +435,21 @@ function gantiPapan() {
 // KIRIM LEADERBOARD
 function tampilLeaderboard() {
     const namaPlayer = localStorage.getItem("nama_terakhir") || "NO NAME"
-    const rekorSkor  = localStorage.getItem("skor_tertinggi") || 0
     const levelPlayer = localStorage.getItem("level_terakhir") || 1
     const skorPlayer = localStorage.getItem("skor_terakhir") || 0
+    const waktuPlayer = localStorage.getItem("waktu_terakhir") || "Normal"
+
+    const rekorSkor = Math.max(
+        Number(localStorage.getItem("skor_tertinggi_" + namaPlayer)) || 0,
+        Number(localStorage.getItem("skor_terakhir")) || 0
+    )
+
 
     document.getElementById("nama-user").innerText = namaPlayer
     document.getElementById("papan-skor").innerText = skorPlayer
     document.getElementById("papan-rekor").innerText = rekorSkor
     document.getElementById("level-game").innerText = levelPlayer
+    document.getElementById("waktu-game").innerText = waktuPlayer.toUpperCase()
 
     fetch(`database/api.php?skorku=${skorPlayer}`) 
         .then(response => response.json())
@@ -458,10 +502,50 @@ function tampilLeaderboard() {
     // console.log(namaPlayer)
     // console.log(rekorSkor)
     // console.log(levelPlayer)
+}
 
+// HEALT 
+function updateTampilanHealt() {
+    const heartImages = document.querySelectorAll(".nyawa-img")
+
+    heartImages.forEach((icon, index) => {
+        if (index < live) {
+            icon.style.webkitMaskImage = "url('./assets/pixel-heart.png')"
+            icon.style.maskImage = "url('./assets/pixel-heart.png')"
+        } 
+        else {
+            icon.style.webkitMaskImage = "url('./assets/pixel-heart-none.png')"
+            icon.style.maskImage = "url('./assets/pixel-heart-none.png')"
+        }
+    })
+}
+
+function tampilkanGameOver() {
+    clearInterval(mesinWaktu)
+
+    areaSoal.style.display = "none"
+    areaJawaban.style.display = "none"
+    const groupAksi = document.getElementById("grub-aksi")
+    if (groupAksi) groupAksi.style.display = "none"
+
+    pesanTengah.innerText = "GAME OVER!!"
+    pesanTengah.style.display = "block"
+    document.getElementById("tombol-gameover").style.display = "grid"
+    
+    pesanTengah.classList.add("efek-game-over-raksasa")
+    layarKuis.classList.add("layar-error")
+
+    setTimeout(function() {
+        // pesanTengah.classList.remove("efek-game-over-raksasa")
+        pesanTengah.className = ""
+        selesaiGame()
+    }, 2000)
 }
 
 
+// =========================
+// DARI INDEX HTML
+// =========================
 
 // Fungsi Check halaman Beranda
 function validasiFormKuis() {
@@ -551,8 +635,6 @@ function simpanNama() {
     
     document.getElementById("nama-user").innerText = nama
     document.getElementById("hidden-nama").value = nama
-    
-    // Menghilangkan Modal
     document.getElementById("modal-nama").style.display = "none"
     return true
 }
@@ -565,4 +647,26 @@ function backHome() {
 function backQuiz() {
     const queryLama = localStorage.getItem("query_player_terakhir") || ""
     window.location.href = "./quiz.html" + queryLama
+}
+
+
+// STATUS DI LAYAR BERANDA (urutannya sama dengan validasiFormKuis)
+function perbaruiStatusLayar() {
+    const status = document.getElementById("layar-status")
+    if (!status) return
+
+    let teks = "SIAP MAIN"
+
+    if (!document.getElementById("hidden-nama").value) teks = "ISI NAMA"
+    else if (!document.querySelector('input[name="jenis-operasi"]:checked')) teks = "PILIH OPERASI"
+    else if (!document.querySelector('input[name="speed-timer"]:checked')) teks = "PILIH WAKTU"
+    else if (!document.querySelector('input[name="mode-kuis"]:checked')) teks = "PILIH MODE"
+
+    status.innerText = teks
+}
+
+if (document.getElementById("layar-status")) {
+    document.addEventListener("change", perbaruiStatusLayar)
+    document.addEventListener("click", perbaruiStatusLayar)
+    perbaruiStatusLayar()
 }
