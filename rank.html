@@ -16,51 +16,44 @@
             </div>
 
             <div class="layar-kuis" id="layar-kuis">
-                <div class="status-info">
-
-                    <div id="layar-result" style="height: 100%;">
-                        <h2 class="text-kedip">=== GAME OVER ===</h2>
-                        <div class="status-row">
-                            <p>> NAMA</p>
-                            <span id="nama-user"></span>
-                        </div>
-                        <div class="status-row">
-                            <p>> SCORE</p>
-                            <span id="papan-skor"></span>
-                        </div>
-                        <div class="status-row">
-                            <p>> RECORD</p>
-                            <span id="papan-rekor"></span>
-                        </div>
-                        <div class="status-row">
-                            <p>> RANK</p>
-                            <span id="level-game"></span>
-                        </div>
+                <div id="layar-result" class="tampilan-result-baru">
+                    <h2 class="judul-gameover">=== MATCH RESULT ===</h2>
+                    <p class="pemain-teks">PLAYER: <span id="nama-user"></span></p>
+    
+                    <div class="wadah-skor-besar">
+                        <p class="teks-kecil">FINAL SCORE</p>
+                        <h1 id="papan-skor" class="angka-raksasa">0</h1>
+                        <p class="teks-kecil rekor-teks">HI-SCORE: <span id="papan-rekor">0</span></p>
                     </div>
-                    
-                    <div id="layar-leaderboard" style="display: none; height: 100%;">
-                        <h3 class="title-retro">=== TOP PLAYER ===</h3>
-                        <div class="layar-leaderboard">
-                            <table class="tabel-peringkat">
-                                <thead>
-                                    <tr>
-                                        <th>NO</th>
-                                        <th>NAME</th>
-                                        <th>SCORE</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="juara">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    
-                                </tfoot>
-                            </table>
-                        </div>
+    
+                    <div class="info-bawah-result">
+                        <div>RANK: <span id="level-game"></span></div>
+                        <div>MODE: <span id="waktu-game"></span></div>
+                    </div>
+                </div>
+                
+                <div id="layar-leaderboard" style="display: none; height: 100%;">
+                    <h3 class="judul-gameover">=== TOP PLAYER ===</h3>
+                    <div class="layar-leaderboard">
+                        <table class="tabel-peringkat">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>NAME</th>
+                                    <th>SCORE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="juara">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
