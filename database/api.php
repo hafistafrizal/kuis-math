@@ -2,16 +2,11 @@
 
 header("Content-Type: application/json");
 
-// CHECK CONNECT JSON
-// $test_array = ["pesan" => "API Siap Digunakan"];
-// echo json_encode($test_array);
-// echo "\n";
-
 // KONEKSI DATABASE
-$host       = "localhost";
-$username   = "root";
-$password   = "";
-$database   = "db_math_quiz";
+$host       = "sql305.infinityfree.com";
+$username   = "if0_43052781";
+$password   = "puuxud7unKgls";
+$database   = "if0_43052781_db_kuis";
 
 $conn = new mysqli($host, $username, $password, $database);
 
