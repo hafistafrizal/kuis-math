@@ -818,3 +818,148 @@ hr {
 }
 .title-section::after { content: ""; flex: 1; border-top: 2px solid #9e9a98; }
 .title-range .title-section::after { content: none; }
+
+/* ===== TAMPILAN LAYAR BERANDA ===== */
+.menu-game {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    line-height: 1.4;
+}
+
+/* judul */
+.menu-judul { text-align: center; }
+
+.menu-judul-kecil {
+    display: block;
+    font-size: .5rem;
+    letter-spacing: 8px;
+    padding-left: 8px;              /* menyeimbangkan spasi huruf terakhir */
+    margin-bottom: 6px;
+    opacity: .8;
+}
+
+.menu-judul-besar {
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin: 0;
+    text-shadow: 2px 2px 0 rgba(15, 56, 15, .3);
+}
+
+/* baris pemain + level */
+.menu-pemain {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: .55rem;
+}
+
+.menu-pemain-nama {
+    position: relative;
+    max-width: 55%;
+    padding-left: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menu-pemain-nama::before {         /* penunjuk segitiga berkedip */
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 7px;
+    height: 9px;
+    margin-top: -4px;
+    background: var(--text-screen);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    animation: kedip-arcade 1s steps(1) infinite;
+}
+
+#nama-user:empty::before { content: "- - -"; opacity: .5; }
+
+.menu-level {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .5rem;
+    white-space: nowrap;
+}
+
+.menu-bar { display: flex; gap: 2px; }
+.menu-bar i { width: 5px; height: 9px; background: rgba(15, 56, 15, .2); }
+.menu-bar i.on { background: var(--text-screen); }
+
+/* tiga slot pilihan: kosong = samar, terisi = menyala */
+.menu-slot-grup {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.menu-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 50px;
+    padding: 6px 2px;
+    border-radius: 3px;
+    background: rgba(15, 56, 15, .12);
+}
+
+.menu-label {
+    font-size: .4rem;
+    letter-spacing: 1px;
+    opacity: .65;
+}
+
+.menu-nilai {
+    font-size: .5rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.menu-nilai:empty::before { content: "---"; opacity: .45; }
+
+.menu-slot.terisi {
+    background: var(--text-screen);
+    color: var(--bg-screen);
+}
+.menu-slot.terisi .menu-label { opacity: .8; }
+
+/* status / ajakan di bagian bawah layar */
+.menu-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-radius: 3px;
+    font-size: .55rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.menu-status::before,
+.menu-status::after {
+    content: "";
+    width: 6px;
+    height: 8px;
+    background: currentColor;
+}
+.menu-status::before { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.menu-status::after  { clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+
+.menu-status.siap {
+    background: var(--text-screen);
+    color: var(--bg-screen);
+}
+.menu-status.siap::before,
+.menu-status.siap::after { animation: kedip-arcade .6s steps(1) infinite; }

@@ -650,7 +650,6 @@ function backQuiz() {
 }
 
 
-// STATUS DI LAYAR BERANDA (urutannya sama dengan validasiFormKuis)
 function perbaruiStatusLayar() {
     const status = document.getElementById("layar-status")
     if (!status) return
@@ -663,6 +662,20 @@ function perbaruiStatusLayar() {
     else if (!document.querySelector('input[name="mode-kuis"]:checked')) teks = "PILIH MODE"
 
     status.innerText = teks
+    status.classList.toggle("siap", teks === "SIAP MAIN")
+
+    // slot pilihan menyala kalau sudah terisi
+    document.querySelectorAll(".menu-slot").forEach(slot => {
+        const nilai = slot.querySelector(".menu-nilai")
+        slot.classList.toggle("terisi", nilai.textContent.trim() !== "")
+    })
+
+    // bar level (1-10)
+    const bar = document.getElementById("bar-level")
+    if (bar) {
+        const lv = Number(document.getElementById("hidden-level").value) || 1
+        bar.innerHTML = '<i class="on"></i>'.repeat(lv) + "<i></i>".repeat(10 - lv)
+    }
 }
 
 if (document.getElementById("layar-status")) {
