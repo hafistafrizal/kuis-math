@@ -437,12 +437,13 @@ function gantiPapan() {
 function tampilLeaderboard() {
     const namaPlayer = localStorage.getItem("nama_terakhir") || "NO NAME"
     const levelPlayer = localStorage.getItem("level_terakhir") || 1
-    const skorPlayer = localStorage.getItem("skor_terakhir") || 0
+    const skorPlayer = Number(localStorage.getItem("skor_terakhir") || 0)
     const waktuPlayer = localStorage.getItem("waktu_terakhir") || "Normal"
 
+    const kunciRekor = "skor_tertinggi_" + namaPlayer
     const rekorSkor = Math.max(
-        Number(localStorage.getItem("skor_tertinggi_" + namaPlayer)) || 0,
-        Number(localStorage.getItem("skor_terakhir")) || 0
+        Number(localStorage.getItem(kunciRekor)) || 0,
+        skorPlayer
     )
 
     document.getElementById("nama-user").innerText = namaPlayer
@@ -460,20 +461,23 @@ function tampilLeaderboard() {
 
             if (data.status === "error" || !data.top_10) {
                 console.error("Gagal memuat leaderboard:", data.message);
-                return; // Hentikan proses di sini agar forEach tidak error
+                return;
             }
 
             const tbody = document.querySelector(".tabel-peringkat tbody")
+            const tfoot = document.querySelector(".tabel-peringkat tfoot")
             tbody.innerHTML = ""
-
+            tfoot.innerHTML = ""
             let masukTop10 = false
+            let skorTerbaikDiTabel = 0
 
             data.top_10.forEach((item, index) => {
                 const tr = document.createElement('tr')
                 if (index === 0) tr.classList.add('juara')
 
-                if (item.nama === namaPlayer && item.score === skorPlayer) {
+                if (item.nama.toLowerCase() === namaPlayer.toLowerCase()) {
                     masukTop10 = true
+                    skorTerbaikDiTabel = Number(item.score)
                     tr.classList.add('baris-pemain')
                 }
                 
@@ -486,29 +490,22 @@ function tampilLeaderboard() {
                 tbody.appendChild(tr)
             });
 
-            if (masukTop10 === false) {
+            const tampilkanDiBawah = (masukTop10 === false) || (skorPlayer < skorTerbaikDiTabel)
+
+            if (tampilkanDiBawah) {
                 const trBawah = document.createElement('tr');
                 trBawah.classList.add("baris-pemain")
 
                 trBawah.innerHTML = `
-                    <td>${data.rank_saya}.</td>
-                    <td>${namaPlayer} (Me)</td>
+                    <td>${data.rank_saya || '#'}</td>
+                    <td>${namaPlayer} (latest)</td>
                     <td>${skorPlayer}</td>
                 `;
 
-                const tfoot = document.querySelector('.tabel-peringkat tfoot')
-
                 tfoot.appendChild(trBawah)
             }
-            
-
         })
         .catch(err => console.error("Terjadi kesalahan: ", err))
-
-    // console.log(skorPlayer)
-    // console.log(namaPlayer)
-    // console.log(rekorSkor)
-    // console.log(levelPlayer)
 }
 
 // HEALT 
