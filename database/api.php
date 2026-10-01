@@ -3,15 +3,15 @@
 header("Content-Type: application/json");
 
 // // KONEKSI DATABASE
-// $host       = "sql305.infinityfree.com";
-// $username   = "if0_43052781";
-// $password   = "puuxud7unKgls";
-// $database   = "if0_43052781_db_kuis";
+$host       = "sql305.infinityfree.com";
+$username   = "if0_43052781";
+$password   = "puuxud7unKgls";
+$database   = "if0_43052781_db_kuis";
 
-$host       = "localhost";
-$username   = "root";
-$password   = "";
-$database   = "db_math_quiz";
+// $host       = "localhost";
+// $username   = "root";
+// $password   = "";
+// $database   = "db_math_quiz";
 
 $conn = new mysqli($host, $username, $password, $database);
 
