@@ -136,7 +136,8 @@ function selesaiGame() {
     body: JSON.stringify({
         nama: namaUser || "PLAYER",
         score: skor,
-        level: batasAngka
+        level: batasAngka,
+        timer: speedTimer || 'normal'
     })
     })
     .then(response => response.json())
@@ -444,17 +445,23 @@ function tampilLeaderboard() {
         Number(localStorage.getItem("skor_terakhir")) || 0
     )
 
-
     document.getElementById("nama-user").innerText = namaPlayer
     document.getElementById("papan-skor").innerText = skorPlayer
     document.getElementById("papan-rekor").innerText = rekorSkor
     document.getElementById("level-game").innerText = levelPlayer
     document.getElementById("waktu-game").innerText = waktuPlayer.toUpperCase()
 
-    fetch(`database/api.php?skorku=${skorPlayer}`) 
+    const urlAPI = `database/api.php?level=${levelPlayer}&timer=${waktuPlayer.toLowerCase()}&nama=${encodeURIComponent(namaPlayer)}`;
+
+    fetch(urlAPI) 
         .then(response => response.json())
         .then(data => {
             console.log("Hasil Juara dari Database: ", data)
+
+            if (data.status === "error" || !data.top_10) {
+                console.error("Gagal memuat leaderboard:", data.message);
+                return; // Hentikan proses di sini agar forEach tidak error
+            }
 
             const tbody = document.querySelector(".tabel-peringkat tbody")
             tbody.innerHTML = ""

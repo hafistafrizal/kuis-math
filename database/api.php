@@ -8,7 +8,6 @@ header("Content-Type: application/json");
 // $password   = "puuxud7unKgls";
 // $database   = "if0_43052781_db_kuis";
 
-// KONEKSI DATABASE
 $host       = "localhost";
 $username   = "root";
 $password   = "";
@@ -24,74 +23,87 @@ if ($conn->connect_error) {
     exit;
 }
 
-// MEMBACA LEADERBOARD (GET)
-if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
-
-    $skorPemain = $_GET['skorku'] ?? 0;
-
-    $sql_top10 = "SELECT nama, MAX(score) AS score, MAX(level) AS level 
-                    FROM leaderboard 
-                    GROUP BY nama
-                    ORDER BY score DESC, MAX(id) DESC 
-                    LIMIT 10";
-    $result = $conn->query($sql_top10);
-
-    $leaderboard = [];
-
-    if ($result && $result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $leaderboard[] = $row;
-        }
-    }
-
-
-    $sql_rank = "SELECT COUNT(*) as jumlah_tinggi FROM leaderboard WHERE score > $skorPemain";
-    $result_rank = $conn->query($sql_rank);
-
-    $real_rank = 1;
-
-    if ($result_rank && $result_rank->num_rows > 0) {
-        $row_rank = $result_rank->fetch_assoc();    
-
-        $real_rank = $row_rank['jumlah_tinggi'] + 1;
-    }
-
-    $respon_data = [
-        'top_10' => $leaderboard,
-        'rank_saya' => $real_rank
-    ];
-
-    echo json_encode($respon_data);
-    exit;
-}
+$daftar_timer = ['slow', 'normal', 'fast'];
 
 // MENYIMPAN SCORE BARU (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $inputRaw = file_get_contents('php://input');
     $data = json_decode($inputRaw, true);
 
-    $nama = $data['nama'] ?? 'PLAYER';
-    $scoreBaru = $data['score'] ?? 0;
-    $level = $data['level'] ?? 0;
+    $nama = trim($data['nama'] ?? 'PLAYER');
+    $scoreBaru = (int)($data['score'] ?? 0);
+    $level = (int)($data['level'] ?? 0);
+    $timer = strtolower(trim($data['timer'] ?? 'normal'));
 
-    $sql_cek = "SELECT score FROM leaderboard WHERE nama = '$nama'";
-    $hasil_cek = $conn->query($sql_cek);
-
-    if ($hasil_cek && $hasil_cek->num_rows > 0) {
-        $baris = $hasil_cek->fetch_assoc();
-        $scoreLama = $baris['score'];
-
-        if ($scoreBaru > $scoreLama) {
-            $sql_update = "UPDATE leaderboard SET score = '$scoreBaru', level = '$level' WHERE nama = '$nama'";
-            $conn->query($sql_update);
-        }
-
-    } else {
-        $sql_insert = "INSERT INTO leaderboard (nama, score, level) VALUES ('$nama', $scoreBaru, $level)";
-        $conn->query($sql_insert);
+    if (!in_array($timer, $daftar_timer, true) || $level < 0 || $level > 10 || empty($nama)) {
+        http_response_code(400);
+        echo json_encode(["statur" => "error", "message" => "data tidak valid"]);
+        exit;
     }
 
+    $stmt = $conn->prepare("INSERT INTO leaderboard (nama, score, level, timer) 
+                            VALUES (?, ?, ?, ?)
+                            ON DUPLICATE KEY UPDATE score = GREATEST(score, VALUES(score))");
+    
+    $stmt->bind_param("siis", $nama, $score, $level, $timer);
+    $stmt->execute();
+
     echo json_encode(["status" => "success", "message" => "Skor berhasil disimpan"]);
+    exit;
+}
+
+
+// MEMBACA LEADERBOARD (GET)
+if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
+
+    $level = $_GET['level'] ?? "";
+    $timer = strtolower(trim($_GET['timer'] ?? ""));
+    $nama = trim($_GET['nama'] ?? "");
+
+    if (!in_array($timer, $daftar_timer, true) || !is_numeric($level) || $level < 0 || $level > 10) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'massage' => 'level/timer tidak valid']);
+        exit;
+    }
+    $level = (int)$level;
+
+    $stmt = $conn->prepare("SELECT nama, score FROM leaderboard 
+                            WHERE level = ? AND timer = ?
+                            ORDER BY score DESC
+                            LIMIT 10");
+
+    $stmt->bind_param("is", $level, $timer);
+    $stmt->execute();
+    $top10 = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    $scoreSaya = null;
+    $rank = null;
+
+    if ($nama !== "") {
+        $stmt = $conn->prepare("SELECT score FROM leaderboard 
+                                WHERE nama = ? AND level = ? AND timer = ?");
+        $stmt->bind_param("sis", $nama, $level, $timer);
+        $stmt->execute();
+        $baris = $stmt->get_result()->fetch_assoc();
+
+        if ($baris) {
+            $scoreSaya = (int)$baris['score'];
+
+            $stmt = $conn->prepare("SELECT COUNT(*) AS lebih_tinggi FROM leaderboard 
+                                    WHERE level = ? AND timer = ? AND score > ?");
+            $stmt->bind_param("isi", $level, $timer, $scoreSaya);
+            $stmt->execute();
+            $rank = (int)$stmt->get_result()->fetch_assoc()['lebih_tinggi'] + 1;
+        }
+    }
+
+    $respon_data = [
+        "top_10" => $top10,
+        "skor_saya" => $scoreSaya,
+        "rank_saya" => $rank
+    ];
+
+    echo json_encode($respon_data);
     exit;
 }
 
