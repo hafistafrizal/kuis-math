@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
 
     $stmt = $conn->prepare("SELECT nama, score FROM leaderboard 
                             WHERE level = ? AND timer = ?
-                            ORDER BY score DESC
+                            ORDER BY score DESC, id DESC
                             LIMIT 10");
 
     $stmt->bind_param("is", $level, $timer);
