@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!in_array($timer, $daftar_timer, true) || $level < 0 || $level > 10 || empty($nama)) {
         http_response_code(400);
-        echo json_encode(["statur" => "error", "message" => "data tidak valid"]);
+        echo json_encode(["status" => "error", "message" => "data tidak valid"]);
         exit;
     }
 
@@ -45,10 +45,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             VALUES (?, ?, ?, ?)
                             ON DUPLICATE KEY UPDATE score = GREATEST(score, VALUES(score))");
     
-    $stmt->bind_param("siis", $nama, $score, $level, $timer);
-    $stmt->execute();
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => "Prepare failed: " . $conn->error]);
+        exit;
+    }
 
-    echo json_encode(["status" => "success", "message" => "Skor berhasil disimpan"]);
+    $stmt->bind_param("siis", $nama, $scoreBaru, $level, $timer);
+    
+    if ($stmt->execute()) {
+        echo json_encode(["status" => "success", "message" => "Skor berhasil disimpan"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => "Execute failed: " . $stmt->error]);
+    }
     exit;
 }
 
@@ -60,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
     $timer = strtolower(trim($_GET['timer'] ?? ""));
     $nama = trim($_GET['nama'] ?? "");
 
-    if (!in_array($timer, $daftar_timer, true) || !is_numeric($level) || $level < 0 || $level > 10) {
+    if (!in_array($timer, $daftar_timer, true) || !is_numeric($level) || (int)$level < 0 || (int)$level > 10) {
         http_response_code(400);
         echo json_encode(['status' => 'error', 'massage' => 'level/timer tidak valid']);
         exit;
