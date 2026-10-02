@@ -161,16 +161,20 @@ function mulaiTimer() {
     papanWaktuGlobal.innerText = waktuGlobal
     
     mesinWaktu = setInterval(function() {
-    waktuGlobal--;
-    waktuSoal--;
+        if (sedangMengecek) return
 
-    papanWaktuGlobal.innerText = waktuGlobal
-    papanWaktuSoal.innerText = waktuSoal + " Detik"
+        waktuGlobal--;
+        waktuSoal--;
+
+        papanWaktuGlobal.innerText = waktuGlobal
+        papanWaktuSoal.innerText = waktuSoal + " Detik"
         
         if (waktuGlobal <= 0) {
             tampilkanGameOver()
         }
         else if (waktuSoal <= 0) {
+            sedangMengecek = true
+
             live--
             updateTampilanHealt()
 
