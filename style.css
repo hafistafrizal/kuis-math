@@ -46,7 +46,6 @@ body {
     width: 100%;
     max-width: 450px;
     padding: 22px 18px 26px;
-
     /* min-height: 540px; */
 }
 
@@ -686,11 +685,13 @@ hr {
 }
 
 .judul-gameover {
-    font-size: 1rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin: 0;
     margin-bottom: 6px;
     text-align: center;
-    line-height: 1.5;
-    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 rgba(15, 56, 15, .3);
 }
 
 .pemain-teks {
