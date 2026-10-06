@@ -64,7 +64,7 @@
         <form action="" onsubmit="event.preventDefault()">
             
             <div class="start-kuis">
-                <button type="button" id="generate-kuis" class="btn-start label-main-button" onclick="generateKuis()">Mulai Quiz Math</button>
+                <button type="button" id="generate-kuis" class="btn-start label-main-button">Mulai Quiz Math</button>
             </div>
             
             <div id="grub-aksi">
@@ -83,8 +83,8 @@
                     <input type="number" id="jawaban-user" name="jawaban-user" class="input-manual" placeholder="Jawaban Anda">
                     
                     <div class="grid-operasi">
-                        <button type="button" class="btn-3d-games label-red" onclick="formReset()">Hapus</button>
-                        <button type="button" class="btn-3d-games label-green" onclick="inputJawaban()">Submit</button>
+                        <button type="button" class="btn-3d-games label-red" id="btn-reset-form">Hapus</button>
+                        <button type="button" class="btn-3d-games label-green" id="btn-input-jawaban">Submit</button>
                     </div>
                 </div>
             </div>
@@ -96,21 +96,21 @@
 
             <hr>
             
-            <button type="button" onclick="backHome()" class="btn-3d label-dark">Kembali ke Beranda</button>
+            <button type="button" id="btn-back-home" class="btn-3d label-dark">Kembali ke Beranda</button>
         </form>
     </div>
 
 </body>
 
-    <div id="modal-peringatan" class="modal-overlay" style="display: none;">
+    <!-- <div id="modal-peringatan" class="modal-overlay" style="display: none;">
         <div class="modal-box" style="text-align: center;">
             <h2 id="text-peringatan" class="text-peringatan"></h2>
             <div class="grid-operasi">
-                <button type="button" class="btn-3d-games label-red" onclick="backHome()">BACK HOME</button>
-                <button type="button" class="btn-3d-games label-gold" onclick="tutupPeringatan()">COBA LAGI</button>
+                <button type="button" class="btn-3d-games label-red" id="btn-back-home">BACK HOME</button>
+                <button type="button" class="btn-3d-games label-gold" id="tutup-modal">COBA LAGI</button>
             </div>
         </div>
-    </div>
+    </div> -->
 
 </html>
 

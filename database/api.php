@@ -4,11 +4,10 @@ header("Content-Type: application/json");
 
 // require 'config.php';
 
-
-// $host       = "localhost";
-// $username   = "root";
-// $password   = "";
-// $database   = "db_math_quiz";
+$host       = "localhost";
+$username   = "root";
+$password   = "";
+$database   = "db_math_quiz";
 
 $conn = new mysqli($host, $username, $password, $database);
 

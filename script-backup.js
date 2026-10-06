@@ -411,20 +411,18 @@ function formReset() {
 
 // RECORD AND LEADERBOARD
 function gantiPapan() {
-    const layarResult = document.getElementById("layar-result");
-    const layarLeaderboard = document.getElementById("layar-leaderboard");
-    const buttonGantiPapan = document.getElementById("ganti-layar-papan");
-    if (typeof kedipLayar === "function") kedipLayar();
+    const tombol = document.getElementById("ganti-layar-papan")
+    kedipLayar()
 
     if(modePapan === "result") {
         layarResult.style.display = "none"
         layarLeaderboard.style.display = "flex"
-        buttonGantiPapan.innerText = "Hasil"
+        tombol.innerText = "Hasil"
         modePapan = "leaderboard"
     } else {
         layarResult.style.display = "flex"
         layarLeaderboard.style.display = "none"
-        buttonGantiPapan.innerText = "Peringkat"
+        tombol.innerText = "Peringkat"
         modePapan = "result"
     }
 }
@@ -681,54 +679,3 @@ if (document.getElementById("layar-status")) {
     document.addEventListener("click", perbaruiStatusLayar)
     perbaruiStatusLayar()
 }
-
-const angkaKurang = document.getElementById("level-kurang");
-const angkaTambah = document.getElementById("level-tambah");
-const namaTersimpan = document.getElementById("simpan-nama");
-const tutupModal = document.getElementById("tutup-modal");
-const buttonBack = document.getElementById("btn-back-home");
-const buttonResetForm = document.getElementById("btn-reset-form");
-const buttonInputJawaban = document.getElementById("btn-input-jawaban");
-const buttonBackKuis = document.getElementById("btn-back-kuis");
-// const buttonGenerateKuis = document.getElementById("btn-generate-kuis");
-const buttonGantiPapan = document.getElementById("ganti-layar-papan")
-
-angkaKurang?.addEventListener('click', function() {
-    kurangLevel();
-});
-
-angkaTambah?.addEventListener('click', function() {
-    tambahLevel();
-});
-
-namaTersimpan?.addEventListener('click', function() {
-    simpanNama();
-});
-
-tutupModal?.addEventListener('click', function() {
-    tutupPeringatan();
-});
-
-buttonBack?.addEventListener('click', function() {
-    backHome();
-});
-
-buttonGenerate?.addEventListener('click', function() {
-    generateKuis();
-});
-
-buttonResetForm?.addEventListener('click', function() {
-    formReset();
-});
-
-buttonInputJawaban?.addEventListener('click', function() {
-    inputJawaban();
-});
-
-buttonBackKuis?.addEventListener('click', function() {
-    backQuiz();
-});
-
-buttonGantiPapan?.addEventListener('click', function() {
-    gantiPapan();
-});
