@@ -14,32 +14,32 @@ export function buatAngkaSoal(jenisOperasi, batasAngka) {
 
     } else if (jenisOperasi == "pengurangan") {
         if (numberRange < numberRandom) {
-            nilai1 = numberRandom
-            nilai2 = numberRange
+            nilai1 = numberRandom;
+            nilai2 = numberRange;
         } else {
-            nilai1 = numberRange
-            nilai2 = numberRandom
+            nilai1 = numberRange;
+            nilai2 = numberRandom;
         }
 
     } else if (jenisOperasi == "perkalian") {
         if (Math.random() < 0.5) {
-            nilai1 = numberRange
-            nilai2 = numberRandom
+            nilai1 = numberRange;
+            nilai2 = numberRandom;
         } else {
-            nilai1 = numberRandom
-            nilai2 = numberRange
+            nilai1 = numberRandom;
+            nilai2 = numberRange;
         }
 
     } else if (jenisOperasi == "pembagian") {
-        let angkaX = numberRandom
-        let angkaY = numberRange
-        let hasilKali = angkaX * angkaY
+        let angkaX = numberRandom;
+        let angkaY = numberRange;
+        let hasilKali = angkaX * angkaY;
 
-        nilai1 = hasilKali
-        nilai2 = angkaX
+        nilai1 = hasilKali;
+        nilai2 = angkaX;
     }
 
-    return { nilai1, nilai2 }
+    return { nilai1, nilai2 };
 }
 
 
