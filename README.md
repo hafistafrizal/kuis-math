@@ -7,7 +7,7 @@
 <br><br>
 
 **Kuis matematika serba cepat dalam balutan antarmuka bergaya Game Boy yang nostalgik.**<br>
-Uji kecepatan hitungmu, panjat papan peringkat yang dinamis, dan amankan skor tertinggimu di berbagai level kesulitan dan batas waktu!
+Uji kecepatan hitungmu, panjat papan peringkat yang dinamis, dan amankan skor tertinggimu di berbagai level kesulitan, batas waktu, dan jenis operasi!
 
 <br>
 
@@ -57,11 +57,11 @@ Uji kecepatan hitungmu, panjat papan peringkat yang dinamis, dan amankan skor te
           <br><br>
         </li>
         <li>
-          <b>Lihat hasilmu.</b> Cek skor akhir, hi-score pribadi, serta level dan mode waktu pertandingan. Pindah ke papan peringkat dengan <b>Peringkat</b>, atau langsung main lagi dengan <b>Main Lagi</b>.
+          <b>Lihat hasilmu.</b> Cek skor akhir, hi-score pribadi, serta level, mode waktu, dan operasi pertandingan. Pindah ke papan peringkat dengan <b>Peringkat</b>, atau langsung main lagi dengan <b>Main Lagi</b>.
           <br><br>
         </li>
         <li>
-          <b>Panjat peringkat.</b> <b>Top 10</b> untuk kombinasi level dan waktu yang sama persis. Barismu disorot, dan kalau kamu di luar Top 10, peringkatmu tetap disematkan di bagian bawah.
+          <b>Panjat peringkat.</b> <b>Top 10</b> untuk kombinasi level, waktu, dan jenis operasi yang sama persis. Barismu disorot, dan kalau kamu di luar Top 10, peringkatmu tetap disematkan di bagian bawah.
         </li>
       </ol>
     </td>
@@ -79,8 +79,8 @@ Uji kecepatan hitungmu, panjat papan peringkat yang dinamis, dan amankan skor te
     - **2 mode bermain:** pilihan ganda (4 opsi) atau mengetik jawaban lewat keyboard.
     - **Kesulitan dinamis:** atur besar angka soal dengan mengubah level dari 1 sampai 10.
 - **Papan peringkat dinamis yang cerdas.**
-    - Skor dikelompokkan secara ketat berdasarkan **level** dan **kecepatan waktu**, sehingga setiap kombinasi punya persaingan yang adil.
-    - *Upsert* pintar (`ON DUPLICATE KEY UPDATE`) hanya menimpa skormu kalau kamu berhasil mengalahkan rekor sebelumnya di kategori itu.
+    - Skor dikelompokkan secara ketat berdasarkan **level**, **kecepatan waktu**, dan **jenis operasi**, sehingga setiap kategori punya persaingan yang adil.
+    - *Upsert* pintar (`ON DUPLICATE KEY UPDATE`) hanya menimpa skormu kalau kamu berhasil mengalahkan rekor sebelumnya di kategori tersebut.
     - Namamu otomatis disorot saat berhasil masuk Top 10.
     - Kalau belum masuk Top 10, peringkatmu sendiri disematkan di bagian bawah papan.
 - **Sistem nyawa.** 3 hati per permainan, ditambah batas 5 detik untuk setiap soal. Jawaban salah atau kehabisan waktu mengurangi satu hati.
@@ -113,27 +113,24 @@ flowchart LR
     C -.->|"GET Top 10"| D
     C -->|"Main lagi"| B
     C -->|"Kembali ke menu"| A
+
 ```
 
-Saat pertandingan selesai, skor dikirim ke API PHP. Halaman hasil kemudian meminta API untuk menampilkan Top 10 pada kategori **level + waktu** pertandingan itu, beserta peringkatmu di dalamnya.
-
-<br>
+Saat pertandingan selesai, skor dikirim ke API PHP. Halaman hasil kemudian meminta API untuk menampilkan Top 10 pada kategori **level + waktu + operasi** pertandingan itu, beserta peringkatmu di dalamnya.
 
 ## 🧰 Teknologi
 
 | Lapisan | Teknologi |
-| :--- | :--- |
+| --- | --- |
 | **Frontend** | HTML5, CSS3 (Flexbox / Grid, variabel kustom, animasi keyframe), Vanilla JavaScript (manipulasi DOM, Fetch API) |
 | **Backend** | PHP 8+ (RESTful JSON API, prepared statement untuk mencegah SQL injection) |
 | **Database** | MySQL / MariaDB |
 | **Deployment** | Hosting InfinityFree, CI/CD otomatis dengan GitHub Actions |
-| **Font** | [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) |
-
-<br>
+| **Font** | [Press Start 2P](https://www.google.com/search?q=https://fonts.google.com/specimen/Press%2BStart%2B2P) |
 
 ## 💾 Skema Database
 
-Inti dari papan peringkat adalah sebuah tabel yang dirancang agar tidak ada pemain ganda di tiap kategori.
+Inti dari papan peringkat adalah sebuah tabel yang dirancang agar tidak ada pemain ganda di tiap kategori (Level, Timer, dan Operasi).
 
 ```sql
 CREATE TABLE `leaderboard` (
@@ -142,39 +139,31 @@ CREATE TABLE `leaderboard` (
   `score` int(11) NOT NULL,
   `level` int(11) NOT NULL,
   `timer` varchar(10) NOT NULL DEFAULT 'normal',
+  `operasi` varchar(20) NOT NULL DEFAULT 'penjumlahan',
   `create_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
-  UNIQUE KEY `kunci_unik_pemain` (`nama`,`level`,`timer`)
+  UNIQUE KEY `kunci_unik_pemain` (`nama`,`level`,`timer`,`operasi`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ```
 
 | Kolom | Keterangan |
-| :--- | :--- |
+| --- | --- |
 | `nama` | Nama pemain |
 | `score` | Skor terbaik pemain itu di kategori tersebut |
 | `level` | Level yang dimainkan (1 sampai 10) |
 | `timer` | Kecepatan waktu: `slow`, `normal`, atau `fast` |
+| `operasi` | Jenis operasi: `penjumlahan`, `pengurangan`, `perkalian`, atau `pembagian` |
 | `create_at` | Waktu baris dibuat |
 
-**Satu baris per pemain, per kategori.** Unique key `(nama, level, timer)` memastikan seorang pemain hanya muncul satu kali di setiap papan. Menyimpan skor cukup dengan satu upsert yang hanya mempertahankan nilai tertinggi (disederhanakan):
+**Satu baris per pemain, per kategori.** Unique key `(nama, level, timer, operasi)` memastikan seorang pemain hanya muncul satu kali di setiap papan spesifik. Menyimpan skor cukup dengan satu upsert yang hanya mempertahankan nilai tertinggi:
 
 ```sql
-INSERT INTO leaderboard (nama, score, level, timer)
-VALUES (?, ?, ?, ?)
+INSERT INTO leaderboard (nama, score, level, timer, operasi)
+VALUES (?, ?, ?, ?, ?)
 ON DUPLICATE KEY UPDATE score = GREATEST(score, VALUES(score));
+
 ```
-
-Membaca satu papan cukup dengan menyaring dua kolom yang sama (disederhanakan):
-
-```sql
-SELECT nama, score
-FROM leaderboard
-WHERE level = ? AND timer = ?
-ORDER BY score DESC, id ASC
-LIMIT 10;
-```
-
-<br>
 
 ## 📂 Struktur Proyek
 
@@ -184,40 +173,34 @@ quiz-math/
 ├── quiz.html           # Layar permainan
 ├── rank.html           # Hasil pertandingan dan papan peringkat
 ├── style.css           # Antarmuka Game Boy, animasi, tampilan LCD
-├── script.js           # Logika game, timer, nyawa, pemanggilan API
+├── js/                 # Folder modular (config.js, api.js, ui.js, dll)
 ├── assets/             # Sprite hati, banner, dan GIF demo
 ├── database/
 │   └── api.php         # API JSON: simpan skor / baca papan peringkat
 └── .github/workflows/  # Pipeline CI/CD (GitHub Actions)
-```
 
-<br>
+```
 
 ## 🚀 Cara Menjalankan
 
-**Kebutuhan:** PHP 8+ dan MySQL/MariaDB di komputermu, misalnya lewat [XAMPP](https://www.apachefriends.org/).
+**Kebutuhan:** PHP 8+ dan MySQL/MariaDB di komputermu, misalnya lewat [XAMPP](https://www.google.com/search?q=https://www.apachefriends.org/).
 
 1. **Ambil kodenya.** Clone repositori ke folder web server (untuk XAMPP, folder `htdocs`).
-    ```bash
-    git clone https://github.com/<username-kamu>/quiz-math.git
-    ```
-2. **Buat database.** Di phpMyAdmin, buat database bernama `db_math_quiz` lalu jalankan SQL dari bagian [Skema Database](#-skema-database).
+```bash
+git clone [https://github.com/](https://github.com/)<username-kamu>/quiz-math.git
+
+```
+
+
+2. **Buat database.** Di phpMyAdmin, buat database bernama `db_math_quiz` lalu jalankan SQL dari bagian [Skema Database](https://www.google.com/search?q=%23-skema-database).
 3. **Cek koneksi.** Pastikan host, username, password, dan nama database di bagian atas `database/api.php` sesuai dengan pengaturanmu.
 4. **Mainkan.** Jalankan *Apache* dan *MySQL*, lalu buka `http://localhost/quiz-math/`.
 
 > [!NOTE]
 > Buka game lewat web server (`http://localhost/...`), jangan dengan klik dua kali file HTML-nya. Papan peringkat membutuhkan API PHP agar bisa berfungsi.
 
-<br>
-
 ## 🙏 Kredit
 
-- Font: [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) oleh CodeMan38, berlisensi SIL Open Font License.
-
-<br>
-
-<div align="center">
+* Font: [Press Start 2P](https://www.google.com/search?q=https://fonts.google.com/specimen/Press%2BStart%2B2P) oleh CodeMan38, berlisensi SIL Open Font License.
 
 **Tekan START untuk bermain.** 🕹
-
-</div>

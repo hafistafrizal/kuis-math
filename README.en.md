@@ -7,7 +7,7 @@
 <br><br>
 
 **A fast-paced math quiz wrapped in a nostalgic Game Boy-inspired interface.**<br>
-Test your mental math speed, climb the dynamic leaderboards, and secure your absolute best high score across multiple difficulty levels and time constraints!
+Test your mental math speed, climb the dynamic leaderboards, and secure your absolute best high score across multiple difficulty levels, time constraints, and operation types!
 
 <br>
 
@@ -57,11 +57,11 @@ Test your mental math speed, climb the dynamic leaderboards, and secure your abs
           <br><br>
         </li>
         <li>
-          <b>Check your result.</b> See your final score, personal hi-score, and the level and timer mode of the match. Flip to the leaderboard with <b>Peringkat</b>, or jump straight back in with <b>Main Lagi</b>.
+          <b>Check your result.</b> See your final score, personal hi-score, and the level, timer mode, and operation of the match. Flip to the leaderboard with <b>Peringkat</b>, or jump straight back in with <b>Main Lagi</b>.
           <br><br>
         </li>
         <li>
-          <b>Climb the ranks.</b> The <b>Top 10</b> for your exact level and timer combination. Your row is highlighted, and if you're outside the Top 10 your rank stays pinned at the bottom.
+          <b>Climb the ranks.</b> The <b>Top 10</b> for your exact level, timer speed, and operation combination. Your row is highlighted, and if you're outside the Top 10 your rank stays pinned at the bottom.
         </li>
       </ol>
     </td>
@@ -79,8 +79,8 @@ Test your mental math speed, climb the dynamic leaderboards, and secure your abs
     - **2 play modes:** multiple choice (4 options) or manual keyboard input.
     - **Dynamic difficulty:** scale the size of the numbers by adjusting the level from 1 to 10.
 - **Smart dynamic leaderboard.**
-    - Scores are strictly categorized by **level** and **timer speed**, so every combination has its own fair competition.
-    - A smart *upsert* (`ON DUPLICATE KEY UPDATE`) only overwrites your score when you beat your previous high score in that category.
+    - Scores are strictly categorized by **level**, **timer speed**, and **operation type**, so every combination has its own fair competition.
+    - A smart *upsert* (`ON DUPLICATE KEY UPDATE`) only overwrites your score when you beat your previous high score in that specific category.
     - Your name is highlighted automatically when you make it into the Top 10.
     - If you haven't cracked the Top 10 yet, your own rank is pinned at the bottom of the board.
 - **Health system.** 3 hearts per game, plus a 5-second limit on every question. A wrong answer or a timeout costs you a heart.
@@ -113,27 +113,24 @@ flowchart LR
     C -.->|"GET Top 10"| D
     C -->|"Play again"| B
     C -->|"Back to menu"| A
+
 ```
 
-When a match ends, the score is sent to the PHP API. The result page then asks the API for the Top 10 of that match's **level + timer** category and your own rank within it.
-
-<br>
+When a match ends, the score is sent to the PHP API. The result page then asks the API for the Top 10 of that match's **level + timer + operation** category and your own rank within it.
 
 ## 🧰 Tech Stack
 
 | Layer | Technologies |
-| :--- | :--- |
+| --- | --- |
 | **Frontend** | HTML5, CSS3 (Flexbox / Grid, custom variables, keyframe animations), Vanilla JavaScript (DOM manipulation, Fetch API) |
 | **Backend** | PHP 8+ (RESTful JSON API, prepared statements to prevent SQL injection) |
 | **Database** | MySQL / MariaDB |
 | **Deployment** | InfinityFree hosting, automated CI/CD via GitHub Actions |
-| **Font** | [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) |
-
-<br>
+| **Font** | [Press Start 2P](https://www.google.com/search?q=https://fonts.google.com/specimen/Press%2BStart%2B2P) |
 
 ## 💾 Database Schema
 
-The core of the leaderboard is a table designed to prevent duplicate player entries per category.
+The core of the leaderboard is a table designed to prevent duplicate player entries per specific category (Level, Timer, and Operation).
 
 ```sql
 CREATE TABLE `leaderboard` (
@@ -142,39 +139,31 @@ CREATE TABLE `leaderboard` (
   `score` int(11) NOT NULL,
   `level` int(11) NOT NULL,
   `timer` varchar(10) NOT NULL DEFAULT 'normal',
+  `operasi` varchar(20) NOT NULL DEFAULT 'penjumlahan',
   `create_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
-  UNIQUE KEY `kunci_unik_pemain` (`nama`,`level`,`timer`)
+  UNIQUE KEY `kunci_unik_pemain` (`nama`,`level`,`timer`,`operasi`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ```
 
 | Column | Description |
-| :--- | :--- |
+| --- | --- |
 | `nama` | Player name |
 | `score` | Best score of that player in the category |
 | `level` | Level played (1 to 10) |
 | `timer` | Timer speed: `slow`, `normal` or `fast` |
+| `operasi` | Operation type: `penjumlahan`, `pengurangan`, `perkalian`, or `pembagian` |
 | `create_at` | When the row was created |
 
-**One row per player, per category.** The unique key `(nama, level, timer)` guarantees a player appears only once on each board. Saving a score is a single upsert that only keeps the higher value (simplified):
+**One row per player, per category.** The unique key `(nama, level, timer, operasi)` guarantees a player appears only once on each specific leaderboard. Saving a score is a single upsert that only keeps the higher value:
 
 ```sql
-INSERT INTO leaderboard (nama, score, level, timer)
-VALUES (?, ?, ?, ?)
+INSERT INTO leaderboard (nama, score, level, timer, operasi)
+VALUES (?, ?, ?, ?, ?)
 ON DUPLICATE KEY UPDATE score = GREATEST(score, VALUES(score));
+
 ```
-
-Reading a board is a plain filter on the same two columns (simplified):
-
-```sql
-SELECT nama, score
-FROM leaderboard
-WHERE level = ? AND timer = ?
-ORDER BY score DESC, id ASC
-LIMIT 10;
-```
-
-<br>
 
 ## 📂 Project Structure
 
@@ -184,40 +173,34 @@ quiz-math/
 ├── quiz.html           # Gameplay screen
 ├── rank.html           # Match result and leaderboard
 ├── style.css           # Game Boy UI, animations, LCD styling
-├── script.js           # Game logic, timers, hearts, API calls
+├── js/                 # Modular folder (config.js, api.js, ui.js, etc.)
 ├── assets/             # Heart sprites, banner and demo GIF
 ├── database/
 │   └── api.php         # JSON API: save a score / read the leaderboard
 └── .github/workflows/  # CI/CD pipeline (GitHub Actions)
-```
 
-<br>
+```
 
 ## 🚀 Getting Started
 
-**Requirements:** a local PHP 8+ and MySQL/MariaDB stack, such as [XAMPP](https://www.apachefriends.org/).
+**Requirements:** a local PHP 8+ and MySQL/MariaDB stack, such as [XAMPP](https://www.google.com/search?q=https://www.apachefriends.org/).
 
 1. **Get the code.** Clone the repository into your web root (for XAMPP, the `htdocs` folder).
-    ```bash
-    git clone https://github.com/<your-username>/quiz-math.git
-    ```
-2. **Create the database.** In phpMyAdmin, create a database named `db_math_quiz` and run the SQL from [Database Schema](#-database-schema).
+```bash
+git clone [https://github.com/](https://github.com/)<your-username>/quiz-math.git
+
+```
+
+
+2. **Create the database.** In phpMyAdmin, create a database named `db_math_quiz` and run the SQL from [Database Schema](https://www.google.com/search?q=%23-database-schema).
 3. **Check the connection.** Make sure the host, username, password and database name at the top of `database/api.php` match your setup.
 4. **Play.** Start *Apache* and *MySQL*, then open `http://localhost/quiz-math/`.
 
 > [!NOTE]
 > Open the game through a web server (`http://localhost/...`), not by double-clicking the HTML files. The leaderboard needs the PHP API to work.
 
-<br>
-
 ## 🙏 Credits
 
-- Font: [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) by CodeMan38, licensed under the SIL Open Font License.
-
-<br>
-
-<div align="center">
+* Font: [Press Start 2P](https://www.google.com/search?q=https://fonts.google.com/specimen/Press%2BStart%2B2P) by CodeMan38, licensed under the SIL Open Font License.
 
 **Press START to play.** 🕹
-
-</div>
