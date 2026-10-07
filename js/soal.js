@@ -55,7 +55,7 @@ export function hitungJawaban(nilai1, nilai2, jenisOperasi) {
 }
 
 
-export function pilihanGanda(jawabanBenar) {
+export function buatPilihanGanda(jawabanBenar) {
     let pilihJawaban = [];
     let angkaPalsu;
     pilihJawaban.push(jawabanBenar); // Jawaban Benar masuk Array
