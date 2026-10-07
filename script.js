@@ -97,11 +97,7 @@ function selesaiGame() {
     localStorage.setItem("level_terakhir", batasAngka)
     localStorage.setItem("waktu_terakhir", speedTimer || "Normal")
     
-    const kunciRekor = "skor_tertinggi_" + namaUser
-    let skorLama = Number(localStorage.getItem(kunciRekor)) || 0
-    if(skor > skorLama) {
-        localStorage.setItem(kunciRekor, skor)
-    }
+
     
     fetch("database/api.php", {
     method: "POST",
