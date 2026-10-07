@@ -25,7 +25,7 @@ export async function ambilDataLeaderboard(level, timer, nama) {
     const urlAPI = `database/api.php?level=${level}&timer=${timer.toLowerCase()}&nama=${encodeURIComponent(nama || 'NO NAME')}`;
     
     try {
-        const response = fetch(urlAPI);
+        const response = await fetch(urlAPI);
         return await response.json();
     } catch (error) {
         console.log("Gagal memual Leaderboard", error);
