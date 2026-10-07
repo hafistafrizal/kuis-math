@@ -28,13 +28,14 @@ function gantiPapan() {
 
 // KIRIM LEADERBOARD
 async function tampilLeaderboard() {
-    const dataTeakhir = ambilDataTerakhir();
-    const namaPlayer = dataTeakhir.nama || "PLAYER";
-    const levelPlayer = dataTeakhir.level || 1;
-    const skorPlayer = dataTeakhir.skor || 0;
-    const waktuPlayer = dataTeakhir.timer || "Normal";
+    const dataTerakhir = ambilDataTerakhir();
+    const namaPlayer = dataTerakhir.nama || "PLAYER";
+    const levelPlayer = dataTerakhir.level || 1;
+    const skorPlayer = dataTerakhir.skor || 0;
+    const waktuPlayer = dataTerakhir.timer || "Normal";
+    const operasiPlayer = dataTerakhir.operasi || "penjumlahan";
 
-    const kunciRekor = "skor_tertinggi_" + namaPlayer;
+    const kunciRekor = `skor_tertinggi_${namaPlayer}_${operasiPlayer}_lvl${levelPlayer}_${waktuPlayer}`;
     const rekorSkor = Math.max(
         Number(localStorage.getItem(kunciRekor)) || 0,
         skorPlayer
@@ -45,14 +46,16 @@ async function tampilLeaderboard() {
     const elementRekor = document.getElementById("papan-rekor");
     const elementLevel = document.getElementById("level-game");
     const elementTimer = document.getElementById("waktu-game");
+    const elementOperasi = document.getElementById("operasi-game");
 
     if (elementNama) elementNama.innerText = namaPlayer;
     if (elementSkor) elementSkor.innerText = skorPlayer;
     if (elementRekor) elementRekor.innerText = rekorSkor;
     if (elementLevel) elementLevel.innerText = levelPlayer;
     if (elementTimer) elementTimer.innerText = waktuPlayer.toUpperCase();
+    if (elementOperasi) elementOperasi.innerText = operasiPlayer.toUpperCase();
 
-    const dataAPI = await ambilDataLeaderboard(levelPlayer, waktuPlayer, namaPlayer);
+    const dataAPI = await ambilDataLeaderboard(levelPlayer, waktuPlayer, namaPlayer, operasiPlayer);
 
     if (!dataAPI || dataAPI.status === "error" || !dataAPI.top_10) {
         console.error("Gagal memuat Leaderboard");

@@ -1,5 +1,4 @@
 <?php
-
 header("Content-Type: application/json");
 
 // require 'config.php';
@@ -20,6 +19,7 @@ if ($conn->connect_error) {
 }
 
 $daftar_timer = ['slow', 'normal', 'fast'];
+$daftar_operasi = ['penjumlahan', 'pengurangan', 'perkalian', 'pembagian'];
 
 // MENYIMPAN SCORE BARU (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -30,15 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $scoreBaru = (int)($data['score'] ?? 0);
     $level = (int)($data['level'] ?? 0);
     $timer = strtolower(trim($data['timer'] ?? 'normal'));
+    $operasi = strtolower(trim($data['operasi'] ?? 'penjumlahan'));
 
-    if (!in_array($timer, $daftar_timer, true) || $level < 0 || $level > 10 || empty($nama)) {
+    if (!in_array($timer, $daftar_timer, true) || !in_array($operasi, $daftar_operasi, true) || $level < 0 || $level > 10 || empty($nama)) {
         http_response_code(400);
         echo json_encode(["status" => "error", "message" => "data tidak valid"]);
         exit;
     }
 
-    $stmt = $conn->prepare("INSERT INTO leaderboard (nama, score, level, timer) 
-                            VALUES (?, ?, ?, ?)
+    $stmt = $conn->prepare("INSERT INTO leaderboard (nama, score, level, timer, operasi) 
+                            VALUES (?, ?, ?, ?, ?)
                             ON DUPLICATE KEY UPDATE score = GREATEST(score, VALUES(score))");
     
     if (!$stmt) {
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt->bind_param("siis", $nama, $scoreBaru, $level, $timer);
+    $stmt->bind_param("siiss", $nama, $scoreBaru, $level, $timer, $operasi);
     
     if ($stmt->execute()) {
         echo json_encode(["status" => "success", "message" => "Skor berhasil disimpan"]);
@@ -65,8 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
     $level = $_GET['level'] ?? "";
     $timer = strtolower(trim($_GET['timer'] ?? ""));
     $nama = trim($_GET['nama'] ?? "");
+    $operasi = strtolower(trim($_GET['operasi'] ?? 'penjumlahan'));
 
-    if (!in_array($timer, $daftar_timer, true) || !is_numeric($level) || (int)$level < 0 || (int)$level > 10) {
+    if (!in_array($timer, $daftar_timer, true) || !in_array($operasi, $daftar_operasi, true) || !is_numeric($level) || (int)$level < 0 || (int)$level > 10) {
         http_response_code(400);
         echo json_encode(['status' => 'error', 'massage' => 'level/timer tidak valid']);
         exit;
@@ -74,11 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
     $level = (int)$level;
 
     $stmt = $conn->prepare("SELECT nama, score FROM leaderboard 
-                            WHERE level = ? AND timer = ?
+                            WHERE level = ? AND timer = ? AND operasi = ?
                             ORDER BY score DESC, id DESC
                             LIMIT 10");
 
-    $stmt->bind_param("is", $level, $timer);
+    $stmt->bind_param("iss", $level, $timer, $operasi);
     $stmt->execute();
     $top10 = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -87,8 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
 
     if ($nama !== "") {
         $stmt = $conn->prepare("SELECT score FROM leaderboard 
-                                WHERE nama = ? AND level = ? AND timer = ?");
-        $stmt->bind_param("sis", $nama, $level, $timer);
+                                WHERE nama = ? AND level = ? AND timer = ? AND operasi = ?");
+        $stmt->bind_param("siss", $nama, $level, $timer, $operasi);
         $stmt->execute();
         $baris = $stmt->get_result()->fetch_assoc();
 
@@ -96,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] ===  'GET') {
             $scoreSaya = (int)$baris['score'];
 
             $stmt = $conn->prepare("SELECT COUNT(*) AS lebih_tinggi FROM leaderboard 
-                                    WHERE level = ? AND timer = ? AND score > ?");
-            $stmt->bind_param("isi", $level, $timer, $scoreSaya);
+                                    WHERE level = ? AND timer = ? AND operasi = ? AND score > ?");
+            $stmt->bind_param("issi", $level, $timer, $operasi, $scoreSaya);
             $stmt->execute();
             $rank = (int)$stmt->get_result()->fetch_assoc()['lebih_tinggi'] + 1;
         }

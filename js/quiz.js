@@ -2,6 +2,7 @@ import { NYAWA_DEFAULT, WAKTU_SOAL_DETIK, SCORE_JAWAB_BENAR, DURASI_TIMER } from
 import { updateTampilanHealt, kedipLayar } from "./ui.js";
 import { buatAngkaSoal, hitungJawaban, buatPilihanGanda } from "./soal.js";
 import { simpanQueryLama, simpanDataSelesai, updateAmbilRekor } from "./storage.js";
+import { kirimSkorDatabase } from "./api.js";
 
 let skor = 0;
 let jawabanBenar;
@@ -124,33 +125,15 @@ function mulaiTimer() {
 }
 
 
-function selesaiGame() {
+async function selesaiGame() {
     clearInterval(mesinWaktu)
     
-    simpanDataSelesai(namaUser, skor, batasAngka, speedTimer);
+    simpanDataSelesai(namaUser, skor, batasAngka, speedTimer, jenisOperasi);
     updateAmbilRekor(namaUser, skor);
     
-    fetch("database/api.php", {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json" 
-        },
-        body: JSON.stringify({
-            nama: namaUser || "PLAYER",
-            score: skor,
-            level: batasAngka,
-            timer: speedTimer || 'normal'
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Respon dari PHP:", data);
-        window.location.href = "./rank.html";
-    })
-    .catch(error => {
-        console.error("Gagal mengirim ke database:", error);
-        window.location.href = "./rank.html";
-    });
+    await kirimSkorDatabase(namaUser, skor, batasAngka, speedTimer, jenisOperasi);
+
+    window.location.href = "./rank.html";
 }
 
 
