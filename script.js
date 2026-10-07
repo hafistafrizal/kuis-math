@@ -5,7 +5,7 @@ let jawabanBenar    // Jawaban yang Benar
 let mesinWaktu      
 let alarmText
 let modePapan = "result"
-let levelSekarang = 1
+
 
 let waktuGlobal = 0
 let waktuSoal = 5
@@ -13,9 +13,7 @@ let timerBerjalan = false
 let sedangMengecek = false
 let live = 3
 
-// Tangkap Parameter dari URL
-const querySring = window.location.search
-const parameter = new URLSearchParams(querySring)
+
 
 const jenisOperasi = parameter.get("jenis-operasi")
 const speedTimer   = parameter.get("speed-timer")
@@ -41,33 +39,11 @@ const nilaiJawaban  = document.getElementById("jawaban-user")
 
 const layarResult = document.getElementById("layar-result")
 const layarLeaderboard = document.getElementById("layar-leaderboard")
-const modalNamaPlayer = document.getElementById('modal-nama')
+
 
 // console.log(layarResult
 
-if (modalNamaPlayer) {
-    const namaTersimpan = localStorage.getItem("nama_terakhir")
-    const btnEditNama = document.getElementById("btn-edit-nama")
-    const statusPemain = parameter.get("status")
 
-
-    if (statusPemain === 'selesai' && namaTersimpan) {
-        document.getElementById("modal-nama").style.display = "none"
-        document.getElementById("nama-user").innerText = namaTersimpan
-        document.getElementById("hidden-nama").value = namaTersimpan
-    } else if (namaTersimpan) {
-        document.getElementById("input-nama").value = namaTersimpan
-    }
-
-    if (btnEditNama) {
-        btnEditNama.addEventListener('click', () => {
-            document.getElementById("modal-nama").style.display = "flex"
-            
-            const inputNama = localStorage.getItem("nama_terakhir")
-            if (inputNama) document.getElementById("input-nama").value = inputNama
-        })
-    }
-}
 
 
 
@@ -504,21 +480,7 @@ function tampilLeaderboard() {
         .catch(err => console.error("Terjadi kesalahan: ", err))
 }
 
-// HEALT 
-function updateTampilanHealt() {
-    const heartImages = document.querySelectorAll(".nyawa-img")
 
-    heartImages.forEach((icon, index) => {
-        if (index < live) {
-            icon.style.webkitMaskImage = "url('./assets/pixel-heart.png')"
-            icon.style.maskImage = "url('./assets/pixel-heart.png')"
-        } 
-        else {
-            icon.style.webkitMaskImage = "url('./assets/pixel-heart-none.png')"
-            icon.style.maskImage = "url('./assets/pixel-heart-none.png')"
-        }
-    })
-}
 
 function tampilkanGameOver() {
     clearInterval(mesinWaktu)
@@ -547,95 +509,20 @@ function tampilkanGameOver() {
 // DARI INDEX HTML
 // =========================
 
-// Fungsi Check halaman Beranda
-function validasiFormKuis() {
-    const operasiKuis   = document.querySelector('input[name="jenis-operasi"]:checked')
-    const speedTimer    = document.querySelector('input[name="speed-timer"]:checked')
-    const modeKuis      = document.querySelector('input[name="mode-kuis"]:checked')
-    
-    let textPeringatan = ""
-    
-    if (!operasiKuis) {
-        textPeringatan = "PILIH OPERASI MATEMATIKA"
-    } else if(!speedTimer) {
-        textPeringatan = "PILIH WAKTU PENGERJAAN"
-    } else if(!modeKuis) {
-        textPeringatan = "PILIH MODE KUIS"
-    } 
-    
-    if(textPeringatan !== "") {
-        document.getElementById("text-peringatan").innerText = textPeringatan
-        document.getElementById("modal-peringatan").style.display = "flex"
-        return false
-    }
-    
-    return true
-}
 
 
-function tutupPeringatan() {
-    document.getElementById("modal-peringatan").style.display = "none"
-}
-
-// Layar Kuis Kedip
-function kedipLayar() {
-    layarKuis.style.backgroundColor = "#0f380f"
-    layarKuis.style.color = "#8bac0f"
-
-    setTimeout(function() {
-        layarKuis.style.backgroundColor = ""
-        layarKuis.style.color = ""
-    }, 100) 
-}
 
 
-function tambahLevel() {
-    if(levelSekarang < 10) {
-        levelSekarang++
-    }
 
-    document.getElementById("angka-slider").innerText = levelSekarang
-    document.getElementById("angka-level").innerText = levelSekarang
-    document.getElementById("hidden-level").value = levelSekarang
-    kedipLayar()
-}
 
-function kurangLevel() {
-    if(levelSekarang > 1) {
-        levelSekarang--
-    }
-    
-    document.getElementById("angka-slider").innerText = levelSekarang
-    document.getElementById("angka-level").innerText = levelSekarang
-    document.getElementById("hidden-level").value = levelSekarang
-    kedipLayar()
-}
+
 
 function gantiLayar(idTujuan, textNew) {
     document.getElementById(idTujuan).innerText = textNew
     kedipLayar()
 }
 
-// MODAL NAMA
-function simpanNama() {
-    const nama = document.getElementById("input-nama").value
-    let textPeringatan = ""
 
-    if(nama === "") {
-        textPeringatan = "MASUKKAN NAMA ANDA"
-    }
-
-    if(textPeringatan !== "") {
-        document.getElementById("text-peringatan").innerText = textPeringatan
-        document.getElementById("modal-peringatan").style.display = "flex"
-        return false
-    }
-    
-    document.getElementById("nama-user").innerText = nama
-    document.getElementById("hidden-nama").value = nama
-    document.getElementById("modal-nama").style.display = "none"
-    return true
-}
 
 
 function backHome() {
@@ -648,39 +535,6 @@ function backQuiz() {
 }
 
 
-function perbaruiStatusLayar() {
-    const status = document.getElementById("layar-status")
-    if (!status) return
-
-    let teks = "SIAP MAIN"
-
-    if (!document.getElementById("hidden-nama").value) teks = "ISI NAMA"
-    else if (!document.querySelector('input[name="jenis-operasi"]:checked')) teks = "PILIH OPERASI"
-    else if (!document.querySelector('input[name="speed-timer"]:checked')) teks = "PILIH WAKTU"
-    else if (!document.querySelector('input[name="mode-kuis"]:checked')) teks = "PILIH MODE"
-
-    status.innerText = teks
-    status.classList.toggle("siap", teks === "SIAP MAIN")
-
-    // slot pilihan menyala kalau sudah terisi
-    document.querySelectorAll(".menu-slot").forEach(slot => {
-        const nilai = slot.querySelector(".menu-nilai")
-        slot.classList.toggle("terisi", nilai.textContent.trim() !== "")
-    })
-
-    // bar level (1-10)
-    const bar = document.getElementById("bar-level")
-    if (bar) {
-        const lv = Number(document.getElementById("hidden-level").value) || 1
-        bar.innerHTML = '<i class="on"></i>'.repeat(lv) + "<i></i>".repeat(10 - lv)
-    }
-}
-
-if (document.getElementById("layar-status")) {
-    document.addEventListener("change", perbaruiStatusLayar)
-    document.addEventListener("click", perbaruiStatusLayar)
-    perbaruiStatusLayar()
-}
 
 const angkaKurang = document.getElementById("level-kurang");
 const angkaTambah = document.getElementById("level-tambah");

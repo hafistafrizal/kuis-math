@@ -54,27 +54,27 @@
         </div>
 
         <!-- BUTTON OPERASI KUIS-->
-        <form action="quiz.html" method="GET" onsubmit="return validasiFormKuis()">
+        <form action="quiz.html" method="GET" id="form-kuis">
             <p class="title-section">Pilih Operasi :</p>
             
             <div class="grid-operasi">
                 <div class="radio-item">
-                    <input type="radio" id="penjumlahan" name="jenis-operasi" value="penjumlahan" onchange="gantiLayar('layar-operasi', '+ Tambah')">
+                    <input type="radio" id="penjumlahan" name="jenis-operasi" value="penjumlahan" data-target="layar-operasi" data-text="+ Tambah">
                     <label for="penjumlahan" class="label-blue">penjumlahan</label>
                 </div>
 
                 <div class="radio-item">
-                    <input type="radio" id="pengurangan" name="jenis-operasi" value="pengurangan" onchange="gantiLayar('layar-operasi', '- kurang')">
+                    <input type="radio" id="pengurangan" name="jenis-operasi" value="pengurangan" data-target="layar-operasi" data-text="- Kurang">
                     <label for="pengurangan" class="label-red">Pengurangan</label>
                 </div>
 
                 <div class="radio-item">
-                    <input type="radio" id="perkalian" name="jenis-operasi" value="perkalian" onchange="gantiLayar('layar-operasi', 'x kali')">
+                    <input type="radio" id="perkalian" name="jenis-operasi" value="perkalian" data-target="layar-operasi" data-text="x Kali">
                     <label for="perkalian" class="label-green">Perkalian</label>
                 </div>
                         
                 <div class="radio-item">
-                    <input type="radio" id="pembagian" name="jenis-operasi" value="pembagian" onchange="gantiLayar('layar-operasi', '/ bagi')">
+                    <input type="radio" id="pembagian" name="jenis-operasi" value="pembagian" data-target="layar-operasi" data-text="/ Bagi">
                     <label for="pembagian" class="label-gold">Pembagian</label>
                 </div>
             </div>
@@ -84,31 +84,31 @@
 
             <div class="grid-timer">
                 <div class="radio-item">
-                    <input type="radio" name="speed-timer" id="slow" value="slow" onchange="gantiLayar('layar-speed', '120 detik')">
+                    <input type="radio" name="speed-timer" id="slow" value="slow" data-target="layar-speed" data-text="120 detik">
                     <label for="slow" class="label-dark">Lambat</label>
                 </div>
 
                 <div class="radio-item">
-                    <input type="radio" name="speed-timer" id="medium" value="normal" onchange="gantiLayar('layar-speed', '90 detik')">
+                    <input type="radio" name="speed-timer" id="medium" value="normal" data-target="layar-speed" data-text="90 detik">
                     <label for="medium" class="label-dark">Normal</label>
                 </div>
 
                 <div class="radio-item">
-                    <input type="radio" name="speed-timer" id="fast" value="fast" onchange="gantiLayar('layar-speed', '60 detik')">
+                    <input type="radio" name="speed-timer" id="fast" value="fast" data-target="layar-speed" data-text="60 detik">
                     <label for="fast" class="label-dark">Cepat</label>
                 </div>
             </div>
 
-            <!-- INPUT RANGE -->
+            <!-- INPUT MODE -->
             <p class="title-section">Mode:</p>
             <div class="grid-operasi">
                 <div class="radio-item">
-                    <input type="radio" id="pilih-jawaban" name="mode-kuis" value="pilih-jawaban" onchange="gantiLayar('layar-mode', 'Pilihan')">
+                    <input type="radio" id="pilih-jawaban" name="mode-kuis" value="pilih-jawaban" data-target="layar-mode" data-text="Pilihan">
                     <label for="pilih-jawaban" class="label-green">pilih</label>
                 </div>
 
                 <div class="radio-item">
-                    <input type="radio" id="input-jawaban" name="mode-kuis" value="input-jawaban" onchange="gantiLayar('layar-mode', 'Input')">
+                    <input type="radio" id="input-jawaban" name="mode-kuis" value="input-jawaban" data-target="layar-mode" data-text="Input">
                     <label for="input-jawaban" class="label-red">input</label>
                 </div>
             </div>
@@ -155,10 +155,10 @@
     <div id="modal-peringatan" class="modal-overlay" style="display: none;">
         <div class="modal-box" style="text-align: center;">
             <h2 id="text-peringatan" class="text-peringatan"></h2>
-            <button type="button" class="btn-start label-main-button" id="tutup-modal"">OK</button>
+            <button type="button" class="btn-start label-main-button" id="tutup-modal">OK</button>
         </div>
     </div>
 
 </html>
 
-<script src="./script.js?=v1"></script>
+<script type="module" src="./js/menu.js"></script>
