@@ -181,40 +181,10 @@ if(layarResult) {
 }
 
 
-function hitungJawaban() {
-    let angkaKe1 = Number(document.getElementById("nilai1").innerText)
-    let angkaKe2 = Number(document.getElementById("nilai2").innerText)
 
-    if(jenisOperasi == "penjumlahan") jawabanBenar = angkaKe1 + angkaKe2
-    else if(jenisOperasi == "pengurangan") jawabanBenar = angkaKe1 - angkaKe2
-    else if(jenisOperasi == "perkalian") jawabanBenar = angkaKe1 * angkaKe2
-    else if(jenisOperasi == "pembagian") jawabanBenar = angkaKe1 / angkaKe2
-}
     
 
-function pilihanGanda() {
-    let pilihJawaban = []
-    let angkaPalsu
-    pilihJawaban.push(jawabanBenar) // Jawaban Benar masuk Array
-        
-    while(pilihJawaban.length < 4) {
-        
-        let selisihAngka = Math.floor(Math.random() * 7) - 3;
-        angkaPalsu = jawabanBenar + selisihAngka
-        
-        if(angkaPalsu !== jawabanBenar && angkaPalsu > 0 && !pilihJawaban.includes(angkaPalsu)) {
-            pilihJawaban.push(angkaPalsu)
-        }
-    } 
-        
-    // Mengacak index Array Jawaban Benar
-    pilihJawaban.sort(() => Math.random() - 0.5);
 
-    document.getElementById("aksi-1").innerText = pilihJawaban[0]
-    document.getElementById("aksi-2").innerText = pilihJawaban[1]
-    document.getElementById("aksi-3").innerText = pilihJawaban[2]
-    document.getElementById("aksi-4").innerText = pilihJawaban[3]
-}
 
 
 function inputJawaban() {
@@ -226,46 +196,7 @@ function inputJawaban() {
 }
 
 
-function buatAngkaSoal() {
-    let numberRange = Math.floor(Math.random() * batasAngka) + 1    // Random Range Number
-    let numberRandom = Math.floor(Math.random() * 9) + 1            // Random Number
 
-    if(jenisOperasi == "penjumlahan") {
-        if (Math.random() < 0.5) {
-            document.getElementById("nilai1").innerText = numberRange
-            document.getElementById("nilai2").innerText = numberRandom
-        } else {
-            document.getElementById("nilai1").innerText = numberRandom
-            document.getElementById("nilai2").innerText = numberRange
-        }
-
-    } else if (jenisOperasi == "pengurangan") {
-        if (numberRange < numberRandom) {
-            document.getElementById("nilai1").innerText = numberRandom
-            document.getElementById("nilai2").innerText = numberRange
-        } else {
-            document.getElementById("nilai1").innerText = numberRange
-            document.getElementById("nilai2").innerText = numberRandom
-        }
-
-    } else if (jenisOperasi == "perkalian") {
-        if (Math.random() < 0.5) {
-            document.getElementById("nilai1").innerText = numberRange
-            document.getElementById("nilai2").innerText = numberRandom
-        } else {
-            document.getElementById("nilai1").innerText = numberRandom
-            document.getElementById("nilai2").innerText = numberRange
-        }
-
-    } else if (jenisOperasi == "pembagian") {
-        let angkaX = numberRandom
-        let angkaY = numberRange
-        let hasilKali = angkaX * angkaY
-
-        document.getElementById("nilai1").innerText = hasilKali
-        document.getElementById("nilai2").innerText = angkaX
-    }
-}
 
 // Generate Number
 function generateKuis() {
